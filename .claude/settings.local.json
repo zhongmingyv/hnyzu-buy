@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse -File | ForEach-Object { $_.FullName })",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(Start-Process .\\\\index.html)"
+    ]
+  }
+}

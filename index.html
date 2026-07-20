@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN</title>
+<meta name="description" content="Phần mềm quản lý khách sạn, đồng hồ nước điện thông minh, khóa thông minh - Giải pháp công nghệ toàn diện cho khách sạn và căn hộ cho thuê.">
+<style>
+  :root{
+    --primary:#0b5fff;
+    --primary-dark:#0846bd;
+    --dark:#0f1a2e;
+    --dark2:#16233d;
+    --text:#33415c;
+    --muted:#6b7a99;
+    --bg:#f5f8fd;
+    --white:#ffffff;
+    --radius:16px;
+    --shadow:0 10px 40px rgba(15,26,46,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  img{max-width:100%;display:block}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:1140px;margin:0 auto;padding:0 20px}
+
+  /* ===== Header ===== */
+  header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #e6ecf5}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--dark);font-size:17px;letter-spacing:.2px}
+  .logo .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#4d9aff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:900;flex-shrink:0}
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:600;color:var(--muted)}
+  .nav-links a:hover{color:var(--primary)}
+  .lang-switch{display:flex;border:1px solid #dbe4f0;border-radius:999px;overflow:hidden;font-size:13px;font-weight:700}
+  .lang-switch button{border:0;background:transparent;padding:6px 13px;cursor:pointer;color:var(--muted);font-weight:700;font-size:13px}
+  .lang-switch button.active{background:var(--primary);color:#fff}
+  .menu-btn{display:none;border:0;background:none;font-size:26px;cursor:pointer;color:var(--dark)}
+
+  /* ===== Hero ===== */
+  .hero{background:radial-gradient(1100px 600px at 80% -10%,#1d3f8f 0%,var(--dark) 55%);color:#fff;padding:90px 0 100px;overflow:hidden}
+  .hero .container{max-width:820px;text-align:center}
+  .hero h1{font-size:42px;line-height:1.2;font-weight:800;margin-bottom:18px}
+  .hero h1 span{color:#6db3ff}
+  .hero p{font-size:17px;color:#b9c6de;margin-bottom:32px;max-width:620px;margin-left:auto;margin-right:auto}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;transition:.2s}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
+  .btn-ghost{border:1.5px solid rgba(255,255,255,.35);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.1)}
+
+  /* ===== Sections ===== */
+  section{padding:88px 0}
+  .sec-head{text-align:center;max-width:640px;margin:0 auto 56px}
+  .sec-head .tag{display:inline-block;background:#e4eeff;color:var(--primary);font-size:13px;font-weight:800;padding:6px 16px;border-radius:999px;margin-bottom:14px;letter-spacing:.5px}
+  .sec-head h2{font-size:32px;color:var(--dark);font-weight:800;margin-bottom:12px}
+  .sec-head p{color:var(--muted);font-size:16px}
+
+  /* Products */
+  .products{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+  .card{background:var(--white);border-radius:var(--radius);padding:36px 30px;box-shadow:var(--shadow);transition:.25s;border:1px solid #eef2f9}
+  .card .pimg{height:190px;border-radius:12px;background:#f4f7fc;border:1px solid #eef2f9;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:22px;padding:14px;overflow:hidden}
+  .card .pimg img{max-height:100%;width:auto;max-width:100%;object-fit:contain}
+  .card .pimg.dual img{max-width:48%}
+  .card:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(15,26,46,.13)}
+  .card .icon{width:60px;height:60px;border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .icon-blue{background:#e4eeff;color:var(--primary)}
+  .icon-green{background:#e2f7ee;color:#0f9d63}
+  .icon-orange{background:#fff0e2;color:#e8720c}
+  .icon-purple{background:#f0e9ff;color:#7c3aed}
+  .card h3{font-size:20px;color:var(--dark);font-weight:800;margin-bottom:12px}
+  .card p{font-size:14.5px;color:var(--muted);margin-bottom:18px}
+  .card ul{list-style:none}
+  .card li{font-size:14px;padding:6px 0 6px 26px;position:relative;color:var(--text)}
+  .card li::before{content:"✓";position:absolute;left:0;color:var(--primary);font-weight:900}
+
+  /* Software showcase */
+  .showcase{background:var(--white)}
+  .showcase .container{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .showcase .frame{border-radius:14px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #e6ecf5}
+  .showcase h2{font-size:30px;color:var(--dark);font-weight:800;margin-bottom:16px}
+  .showcase>.container p.desc{color:var(--muted);margin-bottom:24px}
+  .feat{display:flex;gap:14px;margin-bottom:18px}
+  .feat .fi{width:44px;height:44px;border-radius:12px;background:#e4eeff;color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+  .feat b{display:block;color:var(--dark);font-size:15.5px;margin-bottom:2px}
+  .feat span{font-size:14px;color:var(--muted)}
+
+  /* Why us */
+  .why{background:var(--dark);color:#fff}
+  .why .sec-head h2{color:#fff}
+  .why .sec-head p{color:#9fb0cc}
+  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .why-item{background:var(--dark2);border:1px solid #22345c;border-radius:var(--radius);padding:28px 24px;text-align:center}
+  .why-item .n{font-size:34px;margin-bottom:12px}
+  .why-item b{display:block;font-size:16px;margin-bottom:8px}
+  .why-item span{font-size:13.5px;color:#9fb0cc}
+
+  /* Contact */
+  .contact-box{background:linear-gradient(135deg,var(--primary),#3d8bff);border-radius:24px;padding:60px 50px;color:#fff;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;box-shadow:0 20px 60px rgba(11,95,255,.3)}
+  .contact-box h2{font-size:30px;font-weight:800;margin-bottom:12px}
+  .contact-box p{color:#dbe8ff;font-size:15.5px}
+  .contact-list{display:flex;flex-direction:column;gap:16px}
+  .contact-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.14);border-radius:14px;padding:16px 20px;font-weight:600;font-size:15px}
+  .contact-item .ci{font-size:22px}
+  .contact-item a:hover{text-decoration:underline}
+
+  /* Footer */
+  footer{background:var(--dark);color:#8fa1c0;padding:36px 0;font-size:14px}
+  footer .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer b{color:#fff}
+
+  /* ===== Responsive ===== */
+  @media(max-width:960px){
+    .showcase .container,.contact-box{grid-template-columns:1fr}
+    .products{grid-template-columns:1fr 1fr}
+    .why-grid{grid-template-columns:1fr 1fr}
+    .hero h1{font-size:32px}
+    .hero{padding:60px 0 70px}
+    .nav-links{position:fixed;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;border-bottom:1px solid #e6ecf5;display:none}
+    .nav-links.open{display:flex}
+    .menu-btn{display:block}
+  }
+  @media(max-width:600px){
+    .products,.why-grid{grid-template-columns:1fr}
+    .contact-box{padding:36px 24px}
+    .sec-head h2{font-size:26px}
+    .logo{font-size:13px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="#" class="logo">
+      <span class="mark">T</span>
+      <span data-i18n="companyShort">TÂN KỶ NGUYÊN</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#products" data-i18n="navProducts">Sản phẩm</a>
+      <a href="#software" data-i18n="navSoftware">Phần mềm</a>
+      <a href="#why" data-i18n="navWhy">Vì sao chọn chúng tôi</a>
+      <a href="#contact" data-i18n="navContact">Liên hệ</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="lang-switch">
+        <button data-lang="vi" class="active">VI</button>
+        <button data-lang="zh">中文</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div>
+      <h1 data-i18n-html="heroTitle">Giải pháp công nghệ toàn diện cho <span>khách sạn &amp; căn hộ cho thuê</span></h1>
+      <p data-i18n="heroDesc">Phần mềm quản lý khách sạn, đồng hồ nước điện thông minh và khóa thông minh — tất cả trong một hệ sinh thái, giúp bạn quản lý dễ dàng, tiết kiệm chi phí và tăng doanh thu.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn btn-primary" data-i18n="heroBtn1">Tư vấn miễn phí</a>
+        <a href="#products" class="btn btn-ghost" data-i18n="heroBtn2">Xem sản phẩm</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Products -->
+<section id="products">
+  <div class="container">
+    <div class="sec-head">
+      <span class="tag" data-i18n="prodTag">SẢN PHẨM &amp; DỊCH VỤ</span>
+      <h2 data-i18n="prodTitle">Ba giải pháp cốt lõi</h2>
+      <p data-i18n="prodDesc">Kết hợp phần mềm và thiết bị thông minh, tạo nên hệ thống vận hành khép kín cho khách sạn, nhà nghỉ và căn hộ cho thuê.</p>
+    </div>
+    <div class="products">
+      <div class="card">
+        <div class="pimg"><img src="img/hotel.png" alt="Hotel management software"></div>
+        <div class="icon icon-blue">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+        </div>
+        <h3 data-i18n="p1Title">Phần mềm quản lý khách sạn</h3>
+        <p data-i18n="p1Desc">Hệ thống PMS chuyên nghiệp: quản lý đặt phòng, nhận / trả phòng, giá phòng, doanh thu và báo cáo theo thời gian thực.</p>
+        <ul>
+          <li data-i18n="p1f1">Sơ đồ phòng trực quan, thao tác nhanh</li>
+          <li data-i18n="p1f2">Quản lý đặt phòng &amp; khách hàng</li>
+          <li data-i18n="p1f3">Báo cáo doanh thu chi tiết</li>
+          <li data-i18n="p1f4">Hỗ trợ nhiều cơ sở, nhiều người dùng</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="pimg dual"><img src="img/water.webp" alt="Smart water meter"><img src="img/elec.webp" alt="Smart electricity meter"></div>
+        <div class="icon icon-green">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+        <h3 data-i18n="p2Title">Đồng hồ nước &amp; điện thông minh</h3>
+        <p data-i18n="p2Desc">Đo lường từ xa, đọc số tự động, kết nối trực tiếp với phần mềm — chấm dứt việc ghi số thủ công và tranh chấp tiền điện nước.</p>
+        <ul>
+          <li data-i18n="p2f1">Đọc chỉ số từ xa theo thời gian thực</li>
+          <li data-i18n="p2f2">Tự động tính tiền điện nước theo phòng</li>
+          <li data-i18n="p2f3">Cắt / mở nguồn từ xa</li>
+          <li data-i18n="p2f4">Cảnh báo bất thường, chống thất thoát</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="pimg"><img src="img/lock.webp" alt="Smart lock"></div>
+        <div class="icon icon-orange">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.5"/></svg>
+        </div>
+        <h3 data-i18n="p3Title">Khóa thông minh</h3>
+        <p data-i18n="p3Desc">Khóa cửa thông minh dành cho khách sạn và căn hộ: mở bằng mật khẩu, thẻ từ, vân tay hoặc từ xa qua phần mềm.</p>
+        <ul>
+          <li data-i18n="p3f1">Cấp mật khẩu tạm thời cho khách</li>
+          <li data-i18n="p3f2">Đồng bộ với hệ thống đặt phòng</li>
+          <li data-i18n="p3f3">Lịch sử ra vào rõ ràng</li>
+          <li data-i18n="p3f4">An toàn, ổn định, dễ lắp đặt</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="pimg"><img src="img/reader.webp" alt="Card reader / writer"></div>
+        <div class="icon icon-purple">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        </div>
+        <h3 data-i18n="p4Title">Đầu đọc / ghi thẻ</h3>
+        <p data-i18n="p4Desc">Đầu đọc ghi thẻ RFID kết nối USB, dùng để phát hành thẻ phòng cho khách — đồng bộ trực tiếp với phần mềm và khóa thông minh.</p>
+        <ul>
+          <li data-i18n="p4f1">Phát hành / hủy thẻ phòng nhanh chóng</li>
+          <li data-i18n="p4f2">Kết nối USB, cắm là dùng</li>
+          <li data-i18n="p4f3">Liên kết trực tiếp với khóa thông minh</li>
+          <li data-i18n="p4f4">Hỗ trợ thẻ RFID tiêu chuẩn</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Software showcase -->
+<section class="showcase" id="software">
+  <div class="container">
+    <div class="frame">
+      <img src="img/hotel.png" alt="Hotel management software">
+    </div>
+    <div>
+      <span class="tag" style="display:inline-block;background:#e4eeff;color:var(--primary);font-size:13px;font-weight:800;padding:6px 16px;border-radius:999px;margin-bottom:14px" data-i18n="swTag">PHẦN MỀM</span>
+      <h2 data-i18n="swTitle">Một phần mềm — quản lý toàn bộ khách sạn của bạn</h2>
+      <p class="desc" data-i18n="swDesc">Phần mềm kết nối trực tiếp với đồng hồ điện nước thông minh và khóa thông minh, tạo thành hệ thống vận hành tự động hoàn chỉnh.</p>
+      <div class="feat">
+        <div class="fi">⚡</div>
+        <div>
+          <b data-i18n="sw1t">Tự động hóa điện nước</b>
+          <span data-i18n="sw1d">Chỉ số điện nước tự động cập nhật vào hóa đơn khi khách trả phòng.</span>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="fi">🔑</div>
+        <div>
+          <b data-i18n="sw2t">Nhận phòng không cần chờ</b>
+          <span data-i18n="sw2d">Đặt phòng xong, hệ thống tự cấp mã mở khóa cho khách theo thời gian lưu trú.</span>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="fi">📊</div>
+        <div>
+          <b data-i18n="sw3t">Số liệu minh bạch</b>
+          <span data-i18n="sw3d">Doanh thu, công suất phòng, chi phí điện nước — xem mọi lúc mọi nơi.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why us -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="sec-head">
+      <h2 data-i18n="whyTitle">Vì sao chọn chúng tôi?</h2>
+      <p data-i18n="whyDesc">Chúng tôi không chỉ bán thiết bị — chúng tôi cung cấp giải pháp trọn gói và đồng hành lâu dài.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="n">🏆</div>
+        <b data-i18n="w1t">Giải pháp trọn gói</b>
+        <span data-i18n="w1d">Phần mềm + thiết bị đồng bộ từ một nhà cung cấp duy nhất.</span>
+      </div>
+      <div class="why-item">
+        <div class="n">🛠️</div>
+        <b data-i18n="w2t">Hỗ trợ kỹ thuật tận nơi</b>
+        <span data-i18n="w2d">Lắp đặt, đào tạo và bảo trì nhanh chóng, chuyên nghiệp.</span>
+      </div>
+      <div class="why-item">
+        <div class="n">💰</div>
+        <b data-i18n="w3t">Chi phí hợp lý</b>
+        <span data-i18n="w3d">Giá cạnh tranh, hoàn vốn nhanh nhờ tiết kiệm nhân lực và thất thoát.</span>
+      </div>
+      <div class="why-item">
+        <div class="n">🔄</div>
+        <b data-i18n="w4t">Cập nhật liên tục</b>
+        <span data-i18n="w4d">Phần mềm được nâng cấp thường xuyên theo nhu cầu thực tế.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box">
+      <div>
+        <h2 data-i18n="ctTitle">Liên hệ tư vấn miễn phí</h2>
+        <p data-i18n="ctDesc">Gọi ngay cho chúng tôi để nhận tư vấn giải pháp phù hợp nhất với khách sạn / căn hộ của bạn. Hỗ trợ demo phần mềm trực tiếp.</p>
+      </div>
+      <div class="contact-list">
+        <div class="contact-item">
+          <span class="ci">📞</span>
+          <a href="tel:0326663096">0326 663 096</a>
+        </div>
+        <div class="contact-item">
+          <span class="ci">💬</span>
+          <span data-i18n="ctZalo">Zalo: 0326663096</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0326663096" style="color:#fff">0326 663 096</a></div>
+    <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+  </div>
+</footer>
+
+<script>
+const I18N = {
+  vi: {
+    companyShort: "TÂN KỶ NGUYÊN",
+    navProducts: "Sản phẩm",
+    navSoftware: "Phần mềm",
+    navWhy: "Vì sao chọn chúng tôi",
+    navContact: "Liên hệ",
+    heroTitle: 'Giải pháp công nghệ toàn diện cho <span>khách sạn &amp; căn hộ cho thuê</span>',
+    heroDesc: "Phần mềm quản lý khách sạn, đồng hồ nước điện thông minh và khóa thông minh — tất cả trong một hệ sinh thái, giúp bạn quản lý dễ dàng, tiết kiệm chi phí và tăng doanh thu.",
+    heroBtn1: "Tư vấn miễn phí",
+    heroBtn2: "Xem sản phẩm",
+    prodTag: "SẢN PHẨM & DỊCH VỤ",
+    prodTitle: "Bốn giải pháp cốt lõi",
+    prodDesc: "Kết hợp phần mềm và thiết bị thông minh, tạo nên hệ thống vận hành khép kín cho khách sạn, nhà nghỉ và căn hộ cho thuê.",
+    p1Title: "Phần mềm quản lý khách sạn",
+    p1Desc: "Hệ thống PMS chuyên nghiệp: quản lý đặt phòng, nhận / trả phòng, giá phòng, doanh thu và báo cáo theo thời gian thực.",
+    p1f1: "Sơ đồ phòng trực quan, thao tác nhanh",
+    p1f2: "Quản lý đặt phòng & khách hàng",
+    p1f3: "Báo cáo doanh thu chi tiết",
+    p1f4: "Hỗ trợ nhiều cơ sở, nhiều người dùng",
+    p2Title: "Đồng hồ nước & điện thông minh",
+    p2Desc: "Đo lường từ xa, đọc số tự động, kết nối trực tiếp với phần mềm — chấm dứt việc ghi số thủ công và tranh chấp tiền điện nước.",
+    p2f1: "Đọc chỉ số từ xa theo thời gian thực",
+    p2f2: "Tự động tính tiền điện nước theo phòng",
+    p2f3: "Cắt / mở nguồn từ xa",
+    p2f4: "Cảnh báo bất thường, chống thất thoát",
+    p3Title: "Khóa thông minh",
+    p3Desc: "Khóa cửa thông minh dành cho khách sạn và căn hộ: mở bằng mật khẩu, thẻ từ, vân tay hoặc từ xa qua phần mềm.",
+    p3f1: "Cấp mật khẩu tạm thời cho khách",
+    p3f2: "Đồng bộ với hệ thống đặt phòng",
+    p3f3: "Lịch sử ra vào rõ ràng",
+    p3f4: "An toàn, ổn định, dễ lắp đặt",
+    p4Title: "Đầu đọc / ghi thẻ",
+    p4Desc: "Đầu đọc ghi thẻ RFID kết nối USB, dùng để phát hành thẻ phòng cho khách — đồng bộ trực tiếp với phần mềm và khóa thông minh.",
+    p4f1: "Phát hành / hủy thẻ phòng nhanh chóng",
+    p4f2: "Kết nối USB, cắm là dùng",
+    p4f3: "Liên kết trực tiếp với khóa thông minh",
+    p4f4: "Hỗ trợ thẻ RFID tiêu chuẩn",
+    swTag: "PHẦN MỀM",
+    swTitle: "Một phần mềm — quản lý toàn bộ khách sạn của bạn",
+    swDesc: "Phần mềm kết nối trực tiếp với đồng hồ điện nước thông minh và khóa thông minh, tạo thành hệ thống vận hành tự động hoàn chỉnh.",
+    sw1t: "Tự động hóa điện nước",
+    sw1d: "Chỉ số điện nước tự động cập nhật vào hóa đơn khi khách trả phòng.",
+    sw2t: "Nhận phòng không cần chờ",
+    sw2d: "Đặt phòng xong, hệ thống tự cấp mã mở khóa cho khách theo thời gian lưu trú.",
+    sw3t: "Số liệu minh bạch",
+    sw3d: "Doanh thu, công suất phòng, chi phí điện nước — xem mọi lúc mọi nơi.",
+    whyTitle: "Vì sao chọn chúng tôi?",
+    whyDesc: "Chúng tôi không chỉ bán thiết bị — chúng tôi cung cấp giải pháp trọn gói và đồng hành lâu dài.",
+    w1t: "Giải pháp trọn gói",
+    w1d: "Phần mềm + thiết bị đồng bộ từ một nhà cung cấp duy nhất.",
+    w2t: "Hỗ trợ kỹ thuật tận nơi",
+    w2d: "Lắp đặt, đào tạo và bảo trì nhanh chóng, chuyên nghiệp.",
+    w3t: "Chi phí hợp lý",
+    w3d: "Giá cạnh tranh, hoàn vốn nhanh nhờ tiết kiệm nhân lực và thất thoát.",
+    w4t: "Cập nhật liên tục",
+    w4d: "Phần mềm được nâng cấp thường xuyên theo nhu cầu thực tế.",
+    ctTitle: "Liên hệ tư vấn miễn phí",
+    ctDesc: "Gọi ngay cho chúng tôi để nhận tư vấn giải pháp phù hợp nhất với khách sạn / căn hộ của bạn. Hỗ trợ demo phần mềm trực tiếp.",
+    ctZalo: "Zalo: 0326663096",
+    ftPhone: "Điện thoại",
+    ftRights: "Bảo lưu mọi quyền."
+  },
+  zh: {
+    companyShort: "新纪元科技",
+    navProducts: "产品",
+    navSoftware: "软件",
+    navWhy: "为什么选择我们",
+    navContact: "联系我们",
+    heroTitle: '面向<span>酒店与出租公寓</span>的一体化科技解决方案',
+    heroDesc: "酒店管理软件、智能水电表、智能门锁——三位一体的生态系统，让您管理更轻松、成本更低、收益更高。",
+    heroBtn1: "免费咨询",
+    heroBtn2: "查看产品",
+    prodTag: "产品与服务",
+    prodTitle: "四大核心解决方案",
+    prodDesc: "软件与智能硬件相结合，为酒店、旅馆和出租公寓打造闭环运营系统。",
+    p1Title: "酒店管理软件",
+    p1Desc: "专业 PMS 系统：预订管理、入住/退房、房价管理、营收统计与实时报表。",
+    p1f1: "可视化房态图，操作快捷",
+    p1f2: "预订与客户管理",
+    p1f3: "详细营收报表",
+    p1f4: "支持多门店、多账号",
+    p2Title: "智能水电表",
+    p2Desc: "远程计量、自动抄表、与软件直连——告别人工抄表和水电费纠纷。",
+    p2f1: "实时远程抄表",
+    p2f2: "按房间自动计算水电费",
+    p2f3: "远程断电/断水与恢复",
+    p2f4: "异常告警，防止损耗",
+    p3Title: "智能门锁",
+    p3Desc: "面向酒店与公寓的智能门锁：支持密码、刷卡、指纹开锁，也可通过软件远程管理。",
+    p3f1: "为客人下发临时密码",
+    p3f2: "与订房系统联动",
+    p3f3: "清晰的开门记录",
+    p3f4: "安全稳定，安装简便",
+    p4Title: "读写卡器",
+    p4Desc: "USB 接口 RFID 读写卡器，用于为客人发放房卡——与软件和智能门锁直接联动。",
+    p4f1: "快速发卡 / 退卡",
+    p4f2: "USB 连接，即插即用",
+    p4f3: "与智能门锁直接联动",
+    p4f4: "支持标准 RFID 卡片",
+    swTag: "软件",
+    swTitle: "一套软件，管理整个酒店",
+    swDesc: "软件与智能水电表、智能门锁直连，构建完整的自动化运营系统。",
+    sw1t: "水电全自动",
+    sw1d: "退房时水电读数自动计入账单。",
+    sw2t: "入住零等待",
+    sw2d: "订单确认后，系统按入住时间自动为客人下发开锁密码。",
+    sw3t: "数据透明",
+    sw3d: "营收、入住率、水电成本——随时随地查看。",
+    whyTitle: "为什么选择我们？",
+    whyDesc: "我们不只卖设备——我们提供整套解决方案和长期服务。",
+    w1t: "一站式方案",
+    w1d: "软件 + 硬件出自同一供应商，天然互通。",
+    w2t: "上门技术支持",
+    w2d: "安装、培训、维护，快速专业。",
+    w3t: "价格合理",
+    w3d: "价格有竞争力，节省人力与损耗，快速回本。",
+    w4t: "持续更新",
+    w4d: "软件根据实际需求持续升级。",
+    ctTitle: "联系我们，免费咨询",
+    ctDesc: "立即致电，我们将为您的酒店/公寓提供最合适的方案，并支持现场软件演示。",
+    ctZalo: "Zalo：0326663096",
+    ftPhone: "电话",
+    ftRights: "版权所有。"
+  },
+  en: {
+    companyShort: "TAN KY NGUYEN TECH",
+    navProducts: "Products",
+    navSoftware: "Software",
+    navWhy: "Why Us",
+    navContact: "Contact",
+    heroTitle: 'All-in-one technology solutions for <span>hotels &amp; rental apartments</span>',
+    heroDesc: "Hotel management software, smart water & electricity meters, and smart locks — one integrated ecosystem to simplify management, cut costs, and grow revenue.",
+    heroBtn1: "Free Consultation",
+    heroBtn2: "View Products",
+    prodTag: "PRODUCTS & SERVICES",
+    prodTitle: "Four Core Solutions",
+    prodDesc: "Software and smart devices combined into a closed-loop operating system for hotels, guesthouses, and rental apartments.",
+    p1Title: "Hotel Management Software",
+    p1Desc: "Professional PMS: booking management, check-in / check-out, room rates, revenue and real-time reports.",
+    p1f1: "Visual room map, fast operations",
+    p1f2: "Booking & customer management",
+    p1f3: "Detailed revenue reports",
+    p1f4: "Multi-property, multi-user support",
+    p2Title: "Smart Water & Electricity Meters",
+    p2Desc: "Remote metering with automatic readings, connected directly to the software — no more manual readings or utility disputes.",
+    p2f1: "Real-time remote meter reading",
+    p2f2: "Automatic per-room utility billing",
+    p2f3: "Remote power / water cut-off & restore",
+    p2f4: "Anomaly alerts, loss prevention",
+    p3Title: "Smart Locks",
+    p3Desc: "Smart door locks for hotels and apartments: unlock by passcode, card, fingerprint, or remotely via software.",
+    p3f1: "Temporary passcodes for guests",
+    p3f2: "Synced with the booking system",
+    p3f3: "Clear access history",
+    p3f4: "Secure, stable, easy to install",
+    p4Title: "Card Reader / Writer",
+    p4Desc: "USB RFID card encoder for issuing guest room cards — directly integrated with the software and smart locks.",
+    p4f1: "Issue / revoke room cards in seconds",
+    p4f2: "USB plug-and-play",
+    p4f3: "Directly linked with smart locks",
+    p4f4: "Supports standard RFID cards",
+    swTag: "SOFTWARE",
+    swTitle: "One software — manage your entire hotel",
+    swDesc: "The software connects directly to smart meters and smart locks, forming a fully automated operating system.",
+    sw1t: "Automated utilities",
+    sw1d: "Meter readings are added to the bill automatically at check-out.",
+    sw2t: "Zero-wait check-in",
+    sw2d: "Once booked, the system issues the guest an unlock code valid for their stay.",
+    sw3t: "Transparent data",
+    sw3d: "Revenue, occupancy, utility costs — anytime, anywhere.",
+    whyTitle: "Why choose us?",
+    whyDesc: "We don't just sell devices — we deliver complete solutions with long-term support.",
+    w1t: "All-in-one solution",
+    w1d: "Software + hardware from a single vendor, fully integrated.",
+    w2t: "On-site technical support",
+    w2d: "Fast, professional installation, training and maintenance.",
+    w3t: "Reasonable cost",
+    w3d: "Competitive pricing with fast ROI through labor and loss savings.",
+    w4t: "Continuous updates",
+    w4d: "Software continuously upgraded based on real needs.",
+    ctTitle: "Contact us for a free consultation",
+    ctDesc: "Call us now for the best solution for your hotel / apartments. On-site software demo available.",
+    ctZalo: "Zalo: 0326663096",
+    ftPhone: "Phone",
+    ftRights: "All rights reserved."
+  }
+};
+
+function setLang(lang){
+  const dict = I18N[lang] || I18N.vi;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    if(dict[k]) el.textContent = dict[k];
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{
+    const k = el.getAttribute("data-i18n-html");
+    if(dict[k]) el.innerHTML = dict[k];
+  });
+  document.querySelectorAll(".lang-switch button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+  try{ localStorage.setItem("site_lang", lang); }catch(e){}
+}
+
+document.querySelectorAll(".lang-switch button").forEach(b=>{
+  b.addEventListener("click", ()=> setLang(b.dataset.lang));
+});
+
+document.getElementById("menuBtn").addEventListener("click", ()=>{
+  document.getElementById("navLinks").classList.toggle("open");
+});
+document.querySelectorAll("#navLinks a").forEach(a=>{
+  a.addEventListener("click", ()=> document.getElementById("navLinks").classList.remove("open"));
+});
+
+let saved = "vi";
+try{ saved = localStorage.getItem("site_lang") || "vi"; }catch(e){}
+setLang(saved);
+</script>
+</body>
+</html>
