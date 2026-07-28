@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chính sách &amp; Điều khoản — CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN</title>
+<meta name="description" content="Chính sách bảo mật, chính sách giá, chính sách thanh toán, quy trình khiếu nại, chính sách giao hàng - đổi trả - hoàn tiền và cam kết tuân thủ pháp luật.">
+<style>
+  :root{
+    --primary:#0b5fff;
+    --primary-dark:#0846bd;
+    --dark:#0f1a2e;
+    --dark2:#16233d;
+    --text:#33415c;
+    --muted:#6b7a99;
+    --bg:#f5f8fd;
+    --white:#ffffff;
+    --radius:16px;
+    --shadow:0 10px 40px rgba(15,26,46,.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.75}
+  img{max-width:100%;display:block}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:1140px;margin:0 auto;padding:0 20px}
+
+  header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #e6ecf5}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--dark);font-size:17px;letter-spacing:.2px}
+  .logo .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#4d9aff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:900;flex-shrink:0}
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:600;color:var(--muted)}
+  .nav-links a:hover{color:var(--primary)}
+  .lang-switch{display:flex;border:1px solid #dbe4f0;border-radius:999px;overflow:hidden;font-size:13px;font-weight:700}
+  .lang-switch button{border:0;background:transparent;padding:6px 13px;cursor:pointer;color:var(--muted);font-weight:700;font-size:13px}
+  .lang-switch button.active{background:var(--primary);color:#fff}
+  .menu-btn{display:none;border:0;background:none;font-size:26px;cursor:pointer;color:var(--dark)}
+
+  .page-head{background:radial-gradient(1100px 600px at 80% -10%,#1d3f8f 0%,var(--dark) 55%);color:#fff;padding:56px 0}
+  .page-head h1{font-size:34px;font-weight:800;margin-bottom:10px}
+  .page-head p{color:#b9c6de;font-size:15.5px}
+
+  .layout{display:grid;grid-template-columns:250px 1fr;gap:40px;padding:48px 0 80px;align-items:start}
+  .toc{position:sticky;top:92px;background:var(--white);border:1px solid #eef2f9;border-radius:var(--radius);padding:22px 20px;box-shadow:var(--shadow)}
+  .toc b{display:block;font-size:13px;letter-spacing:.6px;color:var(--primary);margin-bottom:12px}
+  .toc a{display:block;font-size:14px;color:var(--muted);padding:6px 0;border-bottom:1px solid #f1f5fb}
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--primary)}
+
+  article{background:var(--white);border:1px solid #eef2f9;border-radius:var(--radius);padding:44px 46px;box-shadow:var(--shadow)}
+  article section{padding:0;margin-bottom:44px;scroll-margin-top:92px}
+  article section:last-child{margin-bottom:0}
+  article h2{font-size:22px;color:var(--dark);font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e4eeff}
+  article h3{font-size:16.5px;color:var(--dark);font-weight:700;margin:22px 0 8px}
+  article p{font-size:15px;margin-bottom:12px}
+  article ul,article ol{margin:0 0 14px 22px}
+  article li{font-size:15px;margin-bottom:7px}
+  article table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14.5px}
+  article th,article td{border:1px solid #e6ecf5;padding:10px 12px;text-align:left;vertical-align:top}
+  article th{background:#f4f8ff;color:var(--dark);font-weight:700}
+  .note{background:#f4f8ff;border-left:4px solid var(--primary);border-radius:8px;padding:14px 18px;font-size:14.5px;margin:14px 0}
+  .updated{color:var(--muted);font-size:14px;margin-top:34px;padding-top:18px;border-top:1px solid #eef2f9}
+
+  footer{background:var(--dark);color:#8fa1c0;padding:36px 0;font-size:14px}
+  footer .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer a:hover{color:#fff}
+
+  .lang-block{display:none}
+  .lang-block.show{display:block}
+
+  @media(max-width:960px){
+    .layout{grid-template-columns:1fr;gap:24px}
+    .toc{position:static}
+    .page-head h1{font-size:26px}
+    article{padding:28px 22px}
+    .nav-links{position:fixed;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;border-bottom:1px solid #e6ecf5;display:none}
+    .nav-links.open{display:flex}
+    .menu-btn{display:block}
+  }
+  @media(max-width:600px){
+    .logo{font-size:13px}
+    article table{font-size:13.5px}
+    article th,article td{padding:8px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">
+      <span class="mark">T</span>
+      <span data-i18n="companyShort">TÂN KỶ NGUYÊN</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#products" data-i18n="navProducts">Sản phẩm</a>
+      <a href="index.html#software" data-i18n="navSoftware">Phần mềm</a>
+      <a href="index.html#why" data-i18n="navWhy">Vì sao chọn chúng tôi</a>
+      <a href="index.html#contact" data-i18n="navContact">Liên hệ</a>
+      <a href="policy.html" data-i18n="navPolicy">Chính sách</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="lang-switch">
+        <button data-lang="vi" class="active">VI</button>
+        <button data-lang="zh">中文</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="container">
+    <h1 data-i18n="phTitle">Chính sách &amp; Điều khoản</h1>
+    <p data-i18n="phDesc">CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN — Chính sách bảo mật, giá, thanh toán, khiếu nại, giao hàng, đổi trả, hoàn tiền và cam kết tuân thủ pháp luật.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="layout">
+
+    <aside class="toc">
+      <b data-i18n="tocTitle">NỘI DUNG</b>
+      <a href="#privacy" data-i18n="tocPrivacy">1. Chính sách bảo mật</a>
+      <a href="#pricing" data-i18n="tocPricing">2. Chính sách giá</a>
+      <a href="#payment" data-i18n="tocPayment">3. Chính sách thanh toán</a>
+      <a href="#complaint" data-i18n="tocComplaint">4. Tiếp nhận &amp; xử lý khiếu nại</a>
+      <a href="#conditions" data-i18n="tocConditions">5. Điều kiện &amp; hạn chế cung cấp</a>
+      <a href="#delivery" data-i18n="tocDelivery">6. Giao hàng, đổi trả &amp; hoàn tiền</a>
+      <a href="#support" data-i18n="tocSupport">7. Hỗ trợ trực tuyến</a>
+      <a href="#compliance" data-i18n="tocCompliance">8. Cam kết tuân thủ pháp luật</a>
+    </aside>
+
+    <article>
+
+      <!-- ============ VIETNAMESE ============ -->
+      <div class="lang-block show" data-block="vi">
+
+        <section id="privacy">
+          <h2>1. Chính sách bảo mật thông tin</h2>
+          <p>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN (sau đây gọi là “Công ty”, “chúng tôi”) tôn trọng và cam kết bảo vệ thông tin cá nhân của khách hàng. Chính sách này giải thích cách chúng tôi thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu của bạn khi bạn truy cập website, liên hệ tư vấn hoặc sử dụng sản phẩm, dịch vụ của chúng tôi.</p>
+
+          <h3>1.1. Mục đích và phạm vi thu thập thông tin</h3>
+          <p>Chúng tôi chỉ thu thập những thông tin tối thiểu cần thiết để phục vụ khách hàng, bao gồm:</p>
+          <ul>
+            <li>Họ tên, số điện thoại, Zalo, email của người liên hệ;</li>
+            <li>Tên và địa chỉ cơ sở kinh doanh (khách sạn, nhà nghỉ, căn hộ cho thuê) phục vụ việc báo giá, giao hàng, lắp đặt và bảo hành;</li>
+            <li>Nội dung yêu cầu tư vấn, lịch sử đơn hàng, lịch sử hỗ trợ kỹ thuật;</li>
+            <li>Đối với phần mềm quản lý: dữ liệu vận hành do chính khách hàng nhập vào hệ thống (thông tin phòng, đặt phòng, chỉ số điện nước, nhật ký mở khóa…).</li>
+          </ul>
+          <p>Việc cung cấp thông tin là tự nguyện. Khách hàng có quyền từ chối cung cấp, tuy nhiên trong trường hợp đó chúng tôi có thể không thực hiện được việc báo giá, giao hàng, lắp đặt hoặc hỗ trợ kỹ thuật.</p>
+
+          <h3>1.2. Phạm vi sử dụng thông tin</h3>
+          <ul>
+            <li>Tư vấn, báo giá, ký kết và thực hiện hợp đồng mua bán hàng hóa, cung cấp dịch vụ;</li>
+            <li>Giao hàng, lắp đặt, đào tạo sử dụng, bảo hành và bảo trì;</li>
+            <li>Cung cấp hỗ trợ kỹ thuật và xử lý phản hồi, khiếu nại;</li>
+            <li>Gửi thông báo về cập nhật phần mềm, thay đổi chính sách hoặc chương trình khuyến mại (khách hàng có thể từ chối nhận bất kỳ lúc nào);</li>
+            <li>Thực hiện nghĩa vụ kế toán, thuế và các nghĩa vụ khác theo quy định pháp luật.</li>
+          </ul>
+          <p>Chúng tôi <b>không mua bán, trao đổi hoặc cho thuê</b> thông tin cá nhân của khách hàng cho bên thứ ba vì mục đích thương mại. Thông tin chỉ được chia sẻ trong các trường hợp: (i) đơn vị vận chuyển, đối tác lắp đặt — chỉ ở mức cần thiết để giao hàng, lắp đặt; (ii) nhà cung cấp hạ tầng lưu trữ dữ liệu theo hợp đồng bảo mật; (iii) theo yêu cầu hợp pháp của cơ quan nhà nước có thẩm quyền.</p>
+
+          <h3>1.3. Thời gian lưu trữ thông tin</h3>
+          <p>Thông tin cá nhân được lưu trữ trong suốt thời gian khách hàng sử dụng sản phẩm, dịch vụ và trong thời hạn cần thiết sau đó để phục vụ bảo hành, giải quyết tranh chấp và tuân thủ nghĩa vụ lưu trữ chứng từ theo pháp luật (tối thiểu theo quy định về kế toán). Sau thời hạn này, dữ liệu sẽ được xóa hoặc ẩn danh, trừ khi khách hàng yêu cầu xóa sớm hơn và việc xóa không trái quy định pháp luật.</p>
+
+          <h3>1.4. Đơn vị thu thập và quản lý thông tin</h3>
+          <ul>
+            <li><b>Đơn vị:</b> CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN</li>
+            <li><b>Điện thoại / Zalo:</b> 0326 663 096</li>
+          </ul>
+
+          <h3>1.5. Quyền của khách hàng đối với dữ liệu</h3>
+          <p>Khách hàng có quyền yêu cầu chúng tôi: kiểm tra, cập nhật, điều chỉnh thông tin của mình; yêu cầu ngừng sử dụng thông tin cho mục đích tiếp thị; yêu cầu xóa dữ liệu; hoặc khiếu nại về việc thông tin bị sử dụng sai mục đích. Mọi yêu cầu vui lòng gửi qua số điện thoại/Zalo <b>0326 663 096</b>; chúng tôi xử lý trong vòng <b>07 ngày làm việc</b>.</p>
+
+          <h3>1.6. Cam kết bảo mật</h3>
+          <ul>
+            <li>Thông tin cá nhân được lưu trữ và bảo vệ bằng các biện pháp kỹ thuật hợp lý: phân quyền truy cập theo vai trò, mã hóa đường truyền, sao lưu định kỳ;</li>
+            <li>Chỉ nhân sự có trách nhiệm mới được tiếp cận dữ liệu khách hàng và đều phải cam kết bảo mật;</li>
+            <li>Khi xảy ra sự cố an toàn thông tin ảnh hưởng đến dữ liệu khách hàng, chúng tôi sẽ thông báo cho khách hàng và cơ quan chức năng theo quy định;</li>
+            <li>Khách hàng có trách nhiệm tự bảo quản tài khoản, mật khẩu đăng nhập phần mềm và thông báo ngay cho chúng tôi khi phát hiện dấu hiệu bị truy cập trái phép.</li>
+          </ul>
+        </section>
+
+        <section id="pricing">
+          <h2>2. Chính sách giá</h2>
+          <ul>
+            <li>Toàn bộ giá sản phẩm, thiết bị và dịch vụ được niêm yết bằng <b>Đồng Việt Nam (VNĐ)</b>.</li>
+            <li>Website mang tính giới thiệu sản phẩm; giá bán chính thức của từng đơn hàng được xác định trong <b>báo giá</b> hoặc <b>hợp đồng</b> do Công ty phát hành, căn cứ theo số lượng, cấu hình, quy mô lắp đặt và địa điểm triển khai.</li>
+            <li>Báo giá nêu rõ: đơn giá, số lượng, thuế GTGT (nếu có), chi phí vận chuyển, chi phí lắp đặt, thời hạn bảo hành và thời hạn hiệu lực của báo giá.</li>
+            <li>Phần mềm quản lý khách sạn được cung cấp theo hình thức thuê bao theo kỳ (tháng/năm) hoặc bản quyền trọn gói, tùy gói dịch vụ khách hàng lựa chọn; phí thuê bao được nêu rõ trước khi khách hàng xác nhận.</li>
+            <li>Giá có thể thay đổi theo từng thời điểm do biến động chi phí, tỷ giá hoặc chính sách thuế. Mọi thay đổi <b>không áp dụng hồi tố</b> đối với các đơn hàng và hợp đồng đã được xác nhận.</li>
+            <li>Đối với thuê bao dịch vụ, nếu có điều chỉnh phí, chúng tôi thông báo trước tối thiểu <b>30 ngày</b>; khách hàng có quyền không gia hạn kỳ tiếp theo.</li>
+            <li>Các chương trình khuyến mại, chiết khấu theo số lượng được áp dụng theo điều kiện công bố tại từng thời điểm và không cộng dồn trừ khi có thỏa thuận khác.</li>
+          </ul>
+        </section>
+
+        <section id="payment">
+          <h2>3. Chính sách thanh toán</h2>
+          <h3>3.1. Phương thức thanh toán</h3>
+          <ul>
+            <li><b>Chuyển khoản ngân hàng</b> vào tài khoản của Công ty (thông tin tài khoản ghi trên báo giá / hợp đồng / hóa đơn);</li>
+            <li><b>Tiền mặt</b> khi giao hàng hoặc tại trụ sở Công ty, có phiếu thu hợp lệ;</li>
+            <li><b>Thanh toán khi nhận hàng (COD)</b> áp dụng cho một số đơn hàng thiết bị lẻ theo thỏa thuận.</li>
+          </ul>
+
+          <h3>3.2. Tiến độ thanh toán</h3>
+          <table>
+            <tr><th>Loại giao dịch</th><th>Tiến độ thanh toán</th></tr>
+            <tr><td>Thiết bị lẻ (khóa, đồng hồ, đầu đọc thẻ)</td><td>Thanh toán 100% khi đặt hàng hoặc khi nhận hàng (COD)</td></tr>
+            <tr><td>Dự án lắp đặt trọn gói</td><td>Tạm ứng 30–50% khi ký hợp đồng, thanh toán phần còn lại sau khi nghiệm thu</td></tr>
+            <tr><td>Phần mềm thuê bao</td><td>Thanh toán trước theo kỳ (tháng/năm) trước ngày bắt đầu kỳ sử dụng</td></tr>
+          </table>
+
+          <h3>3.3. Hóa đơn và chứng từ</h3>
+          <p>Công ty xuất hóa đơn giá trị gia tăng điện tử theo quy định pháp luật cho mọi giao dịch khi khách hàng cung cấp đầy đủ thông tin xuất hóa đơn. Mọi khoản thanh toán chỉ được coi là hợp lệ khi chuyển vào tài khoản chính thức của Công ty hoặc có phiếu thu do Công ty phát hành.</p>
+          <div class="note">Cảnh báo: Chúng tôi <b>không bao giờ</b> yêu cầu khách hàng chuyển tiền vào tài khoản cá nhân không có trong hợp đồng/báo giá. Vui lòng gọi <b>0326 663 096</b> để xác minh trước khi thanh toán nếu có nghi ngờ.</div>
+
+          <h3>3.4. Thanh toán chậm</h3>
+          <p>Trường hợp khách hàng chậm thanh toán quá thời hạn thỏa thuận, Công ty có quyền tạm ngừng cung cấp dịch vụ hỗ trợ, tạm khóa tài khoản phần mềm sau khi đã thông báo trước ít nhất 07 ngày, cho đến khi khoản nợ được thanh toán.</p>
+        </section>
+
+        <section id="complaint">
+          <h2>4. Quy trình tiếp nhận và xử lý phản hồi, yêu cầu và khiếu nại</h2>
+          <h3>4.1. Kênh tiếp nhận</h3>
+          <ul>
+            <li>Điện thoại / Zalo: <b>0326 663 096</b> (giờ hành chính)</li>
+            <li>Trực tiếp tại trụ sở hoặc thông qua nhân viên kinh doanh phụ trách</li>
+          </ul>
+
+          <h3>4.2. Quy trình xử lý</h3>
+          <ol>
+            <li><b>Bước 1 — Tiếp nhận:</b> Công ty tiếp nhận phản hồi/khiếu nại và xác nhận với khách hàng trong vòng <b>24 giờ làm việc</b>, ghi nhận nội dung, thông tin liên hệ và chứng từ liên quan.</li>
+            <li><b>Bước 2 — Xác minh:</b> Trong vòng <b>03 ngày làm việc</b>, bộ phận phụ trách kiểm tra hồ sơ, đối chiếu hợp đồng, nhật ký hệ thống, biên bản bàn giao và (nếu cần) cử kỹ thuật viên kiểm tra thực tế.</li>
+            <li><b>Bước 3 — Giải quyết:</b> Công ty đưa ra phương án xử lý và thông báo tới khách hàng trong vòng <b>07 ngày làm việc</b> kể từ ngày tiếp nhận. Với vụ việc phức tạp cần kiểm định kỹ thuật, thời hạn tối đa là <b>15 ngày làm việc</b> và khách hàng sẽ được thông báo lý do gia hạn.</li>
+            <li><b>Bước 4 — Phản hồi kết quả &amp; đóng hồ sơ:</b> Kết quả xử lý được thông báo bằng văn bản hoặc qua Zalo/điện thoại. Hồ sơ chỉ được đóng khi khách hàng xác nhận đã được giải quyết.</li>
+          </ol>
+
+          <h3>4.3. Nguyên tắc và cơ chế cuối cùng</h3>
+          <p>Công ty giải quyết trên cơ sở thương lượng, thiện chí, tôn trọng quyền lợi hợp pháp của người tiêu dùng. Nếu hai bên không đạt được thỏa thuận, vụ việc sẽ được đưa ra hòa giải tại cơ quan quản lý nhà nước về bảo vệ quyền lợi người tiêu dùng hoặc giải quyết tại Tòa án có thẩm quyền theo pháp luật Việt Nam.</p>
+        </section>
+
+        <section id="conditions">
+          <h2>5. Điều kiện và hạn chế trong việc cung cấp hàng hóa, dịch vụ</h2>
+          <ul>
+            <li><b>Đối tượng khách hàng:</b> Tổ chức, hộ kinh doanh và cá nhân từ đủ 18 tuổi, có đầy đủ năng lực hành vi dân sự, kinh doanh hoặc quản lý khách sạn, nhà nghỉ, căn hộ cho thuê và các cơ sở lưu trú tương tự.</li>
+            <li><b>Phạm vi cung cấp:</b> Hàng hóa và dịch vụ được cung cấp trên lãnh thổ Việt Nam. Việc lắp đặt tận nơi ưu tiên các khu vực Công ty có đội kỹ thuật; với khu vực xa, có thể phát sinh chi phí đi lại hoặc chuyển sang hình thức hướng dẫn lắp đặt từ xa.</li>
+            <li><b>Điều kiện kỹ thuật:</b> Việc vận hành phần mềm, khóa thông minh, đồng hồ điện nước thông minh yêu cầu cơ sở đáp ứng điều kiện hạ tầng tối thiểu (nguồn điện ổn định, kết nối Internet, hạ tầng mạng nội bộ, quy cách cửa/hộp kỹ thuật phù hợp). Nếu cơ sở không đáp ứng, Công ty có quyền từ chối triển khai hoặc yêu cầu khách hàng cải tạo trước.</li>
+            <li><b>Hàng hóa theo đơn đặt riêng:</b> Thiết bị đặt theo cấu hình riêng, số lượng lớn hoặc phần mềm tùy chỉnh theo yêu cầu có thể yêu cầu đặt cọc và có thời gian giao hàng dài hơn.</li>
+            <li><b>Giới hạn số lượng:</b> Công ty có quyền giới hạn số lượng đặt mua, từ chối hoặc hủy đơn hàng trong trường hợp: hết hàng; thông tin đặt hàng không chính xác; có dấu hiệu gian lận, đầu cơ, mua để bán lại trái phép; hoặc khách hàng vi phạm nghiêm trọng hợp đồng đã ký trước đó.</li>
+            <li><b>Hành vi bị nghiêm cấm:</b> Sử dụng sản phẩm, dịch vụ để giám sát trái phép, xâm phạm đời tư, thu thập trái phép thông tin của khách lưu trú; can thiệp, bẻ khóa, sao chép, phân phối lại phần mềm; sử dụng cho hoạt động vi phạm pháp luật. Vi phạm sẽ dẫn tới chấm dứt dịch vụ mà không hoàn phí.</li>
+            <li><b>Trách nhiệm khai báo lưu trú:</b> Khách hàng tự chịu trách nhiệm thực hiện nghĩa vụ đăng ký, khai báo lưu trú và bảo vệ dữ liệu khách lưu trú theo quy định của pháp luật; phần mềm chỉ là công cụ hỗ trợ.</li>
+            <li>Công ty không cung cấp hàng hóa, dịch vụ thuộc danh mục cấm kinh doanh hoặc hạn chế kinh doanh theo quy định pháp luật Việt Nam.</li>
+          </ul>
+        </section>
+
+        <section id="delivery">
+          <h2>6. Chính sách giao hàng, đổi/trả và hoàn tiền</h2>
+
+          <h3>A. Đối với hàng hóa (khóa thông minh, đồng hồ điện nước, đầu đọc thẻ…)</h3>
+          <p><b>A.1. Giao hàng</b></p>
+          <ul>
+            <li>Thời gian xử lý đơn: 01–02 ngày làm việc kể từ khi xác nhận đơn và thanh toán/đặt cọc.</li>
+            <li>Thời gian giao hàng dự kiến: <b>02–05 ngày làm việc</b> tùy khu vực; đơn hàng số lượng lớn hoặc đặt theo cấu hình riêng: theo tiến độ ghi trong hợp đồng.</li>
+            <li>Phương thức: chuyển phát qua đơn vị vận chuyển, xe của Công ty hoặc giao kèm lắp đặt tại cơ sở của khách hàng.</li>
+            <li>Chi phí vận chuyển được nêu rõ trên báo giá; đơn hàng đạt giá trị theo chương trình từng thời điểm có thể được miễn phí vận chuyển.</li>
+            <li>Khách hàng vui lòng <b>kiểm tra tình trạng kiện hàng khi nhận</b>. Nếu phát hiện bao bì rách, móp, thiếu niêm phong, vui lòng lập biên bản với nhân viên giao hàng và thông báo cho Công ty ngay trong ngày.</li>
+            <li>Trường hợp giao hàng chậm do sự kiện bất khả kháng (thiên tai, dịch bệnh, đình công, sự cố vận chuyển), Công ty sẽ thông báo và thống nhất lại thời gian giao hàng với khách hàng.</li>
+          </ul>
+
+          <p><b>A.2. Đổi / trả hàng</b></p>
+          <table>
+            <tr><th>Trường hợp</th><th>Thời hạn</th><th>Xử lý</th></tr>
+            <tr><td>Hàng giao sai model, sai số lượng, thiếu phụ kiện</td><td>07 ngày kể từ ngày nhận</td><td>Đổi đúng hàng, Công ty chịu toàn bộ chi phí vận chuyển</td></tr>
+            <tr><td>Hàng lỗi kỹ thuật do nhà sản xuất, chưa qua lắp đặt/sử dụng sai cách</td><td>07 ngày kể từ ngày nhận</td><td>Đổi mới hoặc hoàn tiền 100%</td></tr>
+            <tr><td>Hàng lỗi kỹ thuật phát sinh trong thời hạn bảo hành</td><td>Theo thời hạn bảo hành ghi trên phiếu (thông thường 12 tháng)</td><td>Bảo hành, sửa chữa hoặc thay thế linh kiện miễn phí</td></tr>
+            <tr><td>Khách hàng đổi ý, không có lỗi từ sản phẩm</td><td>07 ngày kể từ ngày nhận</td><td>Chỉ nhận lại khi hàng còn nguyên tem, nguyên hộp, chưa lắp đặt; khách hàng chịu chi phí vận chuyển hai chiều</td></tr>
+          </table>
+          <p><b>Không áp dụng đổi/trả</b> đối với: sản phẩm đã lắp đặt vào công trình và bị can thiệp cơ khí; sản phẩm hư hỏng do rơi vỡ, vào nước, chập điện, sét đánh, sử dụng sai điện áp; sản phẩm bị tháo dỡ, sửa chữa bởi bên thứ ba; mất tem bảo hành hoặc không có chứng từ mua hàng; hàng đặt sản xuất theo yêu cầu riêng của khách hàng.</p>
+
+          <p><b>A.3. Hoàn tiền</b></p>
+          <ul>
+            <li>Hoàn tiền theo đúng phương thức khách hàng đã thanh toán; trường hợp thanh toán tiền mặt sẽ hoàn qua chuyển khoản theo tài khoản khách hàng cung cấp.</li>
+            <li>Thời hạn hoàn tiền: <b>07–14 ngày làm việc</b> kể từ khi Công ty nhận lại hàng và xác nhận đủ điều kiện hoàn tiền.</li>
+            <li>Khách hàng không phải chịu phí xử lý hoàn tiền trong các trường hợp lỗi thuộc về Công ty.</li>
+          </ul>
+
+          <h3>B. Đối với dịch vụ (phần mềm quản lý, lắp đặt, hỗ trợ kỹ thuật)</h3>
+          <p><b>B.1. Phương thức cung cấp dịch vụ</b></p>
+          <ul>
+            <li>Phần mềm quản lý khách sạn được cung cấp qua Internet hoặc cài đặt tại máy chủ/máy trạm của khách hàng. Sau khi hoàn tất thanh toán kỳ đầu, Công ty <b>bàn giao tài khoản trong vòng 01–03 ngày làm việc</b>.</li>
+            <li>Dịch vụ bao gồm: khởi tạo hệ thống, cấu hình danh mục phòng/giá, kết nối thiết bị (khóa, đồng hồ, đầu đọc thẻ), đào tạo sử dụng cho nhân sự của khách hàng và hỗ trợ vận hành.</li>
+            <li>Dịch vụ lắp đặt được thực hiện tại cơ sở của khách hàng theo lịch hai bên thống nhất, kết thúc bằng <b>biên bản nghiệm thu bàn giao</b>.</li>
+            <li>Phần mềm được cập nhật, nâng cấp định kỳ. Trường hợp cần bảo trì hệ thống có ảnh hưởng tới việc sử dụng, Công ty thông báo trước tối thiểu 24 giờ, ưu tiên thực hiện ngoài giờ cao điểm.</li>
+          </ul>
+
+          <p><b>B.2. Chính sách chấm dứt dịch vụ</b></p>
+          <ul>
+            <li><b>Khách hàng chủ động chấm dứt:</b> thông báo cho Công ty trước tối thiểu <b>15 ngày</b> trước ngày kết thúc kỳ thuê bao hiện tại. Dịch vụ tiếp tục hoạt động đến hết kỳ đã thanh toán.</li>
+            <li><b>Công ty chấm dứt:</b> khi khách hàng vi phạm nghiêm trọng điều khoản sử dụng (mục 5), chậm thanh toán quá 30 ngày sau khi đã được nhắc bằng văn bản, hoặc sử dụng dịch vụ vào mục đích trái pháp luật. Công ty thông báo trước tối thiểu 07 ngày, trừ trường hợp buộc phải dừng ngay theo yêu cầu của cơ quan có thẩm quyền.</li>
+            <li><b>Dữ liệu sau khi chấm dứt:</b> Khách hàng được quyền yêu cầu trích xuất dữ liệu của mình trong vòng <b>30 ngày</b> kể từ ngày chấm dứt. Sau thời hạn này, dữ liệu có thể bị xóa vĩnh viễn và không khôi phục được.</li>
+          </ul>
+
+          <p><b>B.3. Hoàn tiền dịch vụ</b></p>
+          <ul>
+            <li>Nếu dịch vụ chưa được kích hoạt/bàn giao tài khoản: hoàn <b>100%</b> số tiền đã thanh toán.</li>
+            <li>Nếu Công ty không thể cung cấp dịch vụ như cam kết hoặc lỗi hệ thống thuộc trách nhiệm của Công ty kéo dài liên tục trên <b>72 giờ</b>: hoàn tiền tương ứng phần thời gian chưa sử dụng của kỳ thuê bao, hoặc gia hạn miễn phí tương ứng theo lựa chọn của khách hàng.</li>
+            <li>Nếu khách hàng chủ động chấm dứt giữa kỳ vì lý do cá nhân: phí thuê bao của kỳ đang sử dụng <b>không được hoàn lại</b>, dịch vụ tiếp tục đến hết kỳ.</li>
+            <li>Phí lắp đặt, triển khai và đào tạo đã thực hiện, đã nghiệm thu không thuộc diện hoàn lại.</li>
+            <li>Thời hạn hoàn tiền: <b>07–14 ngày làm việc</b> kể từ khi hai bên thống nhất phương án.</li>
+          </ul>
+        </section>
+
+        <section id="support">
+          <h2>7. Phương thức hỗ trợ trực tuyến</h2>
+          <ul>
+            <li><b>Hotline / Zalo:</b> 0326 663 096 — tư vấn bán hàng, hỗ trợ kỹ thuật, tiếp nhận khiếu nại.</li>
+            <li><b>Hỗ trợ từ xa qua phần mềm điều khiển máy tính</b> (TeamViewer/UltraViewer hoặc tương đương) để xử lý sự cố phần mềm trực tiếp trên máy của khách hàng, thực hiện khi có sự đồng ý của khách hàng.</li>
+            <li><b>Hướng dẫn qua video call / hình ảnh trên Zalo</b> đối với các sự cố thiết bị đơn giản.</li>
+            <li><b>Hỗ trợ tận nơi:</b> cử kỹ thuật viên đến cơ sở khi sự cố không thể xử lý từ xa.</li>
+          </ul>
+          <table>
+            <tr><th>Thời gian hỗ trợ</th><th>Phạm vi</th></tr>
+            <tr><td>Thứ 2 – Thứ 7, 08:00 – 18:00</td><td>Tư vấn, báo giá, hỗ trợ kỹ thuật thông thường, đào tạo sử dụng</td></tr>
+            <tr><td>Ngoài giờ, Chủ nhật và ngày lễ</td><td>Hỗ trợ sự cố khẩn cấp ảnh hưởng đến vận hành (không mở được cửa, mất kết nối hệ thống, không nhận/trả phòng được)</td></tr>
+          </table>
+          <p>Thời gian phản hồi mục tiêu: sự cố khẩn cấp trong vòng <b>02 giờ</b>; yêu cầu thông thường trong vòng <b>24 giờ làm việc</b>.</p>
+        </section>
+
+        <section id="compliance">
+          <h2>8. Cam kết tuân thủ pháp luật</h2>
+          <p>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN cam kết:</p>
+          <ul>
+            <li>Hoạt động kinh doanh tuân thủ pháp luật Việt Nam, bao gồm nhưng không giới hạn: Bộ luật Dân sự, Luật Thương mại, Luật Bảo vệ quyền lợi người tiêu dùng, Luật Giao dịch điện tử, Luật An toàn thông tin mạng, Luật An ninh mạng, Luật Sở hữu trí tuệ, Luật Chất lượng sản phẩm, hàng hóa và các quy định về thương mại điện tử, về bảo vệ dữ liệu cá nhân;</li>
+            <li>Cung cấp thông tin về hàng hóa, dịch vụ và giá cả một cách <b>đầy đủ, chính xác, trung thực</b>, không quảng cáo gây nhầm lẫn;</li>
+            <li>Kinh doanh hàng hóa có nguồn gốc xuất xứ rõ ràng, có hóa đơn chứng từ hợp pháp, đáp ứng tiêu chuẩn kỹ thuật và quy định về chất lượng, an toàn;</li>
+            <li>Thực hiện đầy đủ nghĩa vụ về hóa đơn, kế toán và thuế theo quy định;</li>
+            <li>Bảo vệ dữ liệu cá nhân của khách hàng và người sử dụng; chỉ thu thập, sử dụng dữ liệu trong phạm vi đã thông báo và được đồng ý;</li>
+            <li>Tôn trọng quyền sở hữu trí tuệ của bên thứ ba và bảo vệ quyền sở hữu trí tuệ đối với phần mềm do Công ty phát triển;</li>
+            <li>Thực hiện đúng cam kết bảo hành, hậu mãi và giải quyết khiếu nại của khách hàng theo chính sách công bố tại trang này;</li>
+            <li>Hợp tác, cung cấp thông tin theo yêu cầu hợp pháp của cơ quan nhà nước có thẩm quyền.</li>
+          </ul>
+          <p>Các chính sách trên có hiệu lực kể từ ngày công bố và có thể được cập nhật để phù hợp với quy định pháp luật hoặc thực tế kinh doanh. Phiên bản mới nhất luôn được đăng tải tại trang này. Mọi tranh chấp phát sinh được giải quyết trên tinh thần thương lượng; nếu không thành, sẽ được giải quyết tại Tòa án có thẩm quyền theo pháp luật Việt Nam.</p>
+          <div class="updated">Cập nhật lần cuối: 28/07/2026 — Mọi thắc mắc vui lòng liên hệ 0326 663 096.</div>
+        </section>
+      </div>
+
+      <!-- ============ CHINESE ============ -->
+      <div class="lang-block" data-block="zh">
+
+        <section id="privacy-zh">
+          <h2>1. 隐私政策</h2>
+          <p>新纪元科技有限责任公司（CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN，以下称“本公司”“我们”）尊重并承诺保护客户的个人信息。本政策说明您在访问本网站、咨询或使用我们的产品与服务时，我们如何收集、使用、存储和保护您的数据。</p>
+
+          <h3>1.1 收集目的与范围</h3>
+          <p>我们只收集为客户提供服务所必需的最少信息，包括：</p>
+          <ul>
+            <li>联系人姓名、电话、Zalo、电子邮箱；</li>
+            <li>经营场所名称与地址（酒店、旅馆、出租公寓），用于报价、送货、安装与保修；</li>
+            <li>咨询内容、订单记录、技术支持记录；</li>
+            <li>管理软件方面：由客户自行录入系统的运营数据（房间信息、订房记录、水电读数、开锁日志等）。</li>
+          </ul>
+          <p>信息提供为自愿。客户有权拒绝提供，但在此情况下我们可能无法完成报价、送货、安装或技术支持。</p>
+
+          <h3>1.2 信息使用范围</h3>
+          <ul>
+            <li>咨询、报价、签订及履行货物买卖与服务合同；</li>
+            <li>送货、安装、使用培训、保修与维护；</li>
+            <li>提供技术支持，处理反馈与投诉；</li>
+            <li>发送软件更新、政策变更或促销通知（客户可随时拒绝接收）；</li>
+            <li>履行会计、税务及法律规定的其他义务。</li>
+          </ul>
+          <p>我们<b>不会为商业目的向第三方买卖、交换或出租</b>客户个人信息。仅在以下情形共享：(i) 承运方、安装合作方——仅限送货安装所必需的范围；(ii) 签有保密协议的数据存储服务商；(iii) 依据有权国家机关的合法要求。</p>
+
+          <h3>1.3 信息存储期限</h3>
+          <p>个人信息在客户使用产品、服务期间予以保存，之后在保修、争议处理及依法保存凭证所需的期限内继续保存（会计凭证按法定最短期限）。期限届满后，数据将被删除或匿名化处理，客户提出提前删除且不违反法律规定的除外。</p>
+
+          <h3>1.4 信息收集与管理单位</h3>
+          <ul>
+            <li><b>单位：</b>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN（新纪元科技有限责任公司）</li>
+            <li><b>电话 / Zalo：</b>0326 663 096</li>
+          </ul>
+
+          <h3>1.5 客户对数据享有的权利</h3>
+          <p>客户有权要求我们：查阅、更新、更正其信息；停止将信息用于营销目的；删除数据；或就信息被不当使用提出投诉。请通过电话/Zalo <b>0326 663 096</b> 提出，我们将在 <b>7 个工作日</b>内处理。</p>
+
+          <h3>1.6 保密承诺</h3>
+          <ul>
+            <li>采取合理的技术措施保护个人信息：按角色分配访问权限、传输加密、定期备份；</li>
+            <li>仅限负有职责的人员接触客户数据，并须签署保密承诺；</li>
+            <li>发生影响客户数据的信息安全事件时，我们将依规通知客户及主管机关；</li>
+            <li>客户有责任妥善保管软件登录账号与密码，发现异常访问迹象应立即通知我们。</li>
+          </ul>
+        </section>
+
+        <section id="pricing-zh">
+          <h2>2. 价格政策</h2>
+          <ul>
+            <li>所有产品、设备与服务价格均以<b>越南盾（VNĐ）</b>标示。</li>
+            <li>本网站为产品介绍性质；每笔订单的正式价格以本公司出具的<b>报价单</b>或<b>合同</b>为准，依据数量、配置、安装规模与实施地点确定。</li>
+            <li>报价单载明：单价、数量、增值税（如适用）、运输费、安装费、保修期限及报价有效期。</li>
+            <li>酒店管理软件按周期订阅（月/年）或一次性授权提供，具体依客户选择的套餐；订阅费在客户确认前明确告知。</li>
+            <li>价格可能因成本、汇率或税收政策变动而调整。任何调整<b>均不溯及</b>已确认的订单与合同。</li>
+            <li>订阅服务如需调整费用，我们将提前至少 <b>30 天</b>通知；客户有权不续订下一周期。</li>
+            <li>促销活动与数量折扣按当期公布的条件执行，除另有约定外不叠加使用。</li>
+          </ul>
+        </section>
+
+        <section id="payment-zh">
+          <h2>3. 支付政策</h2>
+          <h3>3.1 支付方式</h3>
+          <ul>
+            <li><b>银行转账</b>至本公司账户（账户信息载于报价单／合同／发票）；</li>
+            <li><b>现金</b>：收货时或在公司办公地点支付，并开具正式收据；</li>
+            <li><b>货到付款（COD）</b>：适用于经协商的部分零星设备订单。</li>
+          </ul>
+
+          <h3>3.2 付款进度</h3>
+          <table>
+            <tr><th>交易类型</th><th>付款进度</th></tr>
+            <tr><td>零星设备（门锁、水电表、读卡器）</td><td>下单时或收货时（COD）付清 100%</td></tr>
+            <tr><td>整体安装项目</td><td>签约时预付 30–50%，验收后付清余款</td></tr>
+            <tr><td>软件订阅</td><td>按周期（月/年）在使用周期开始前预付</td></tr>
+          </table>
+
+          <h3>3.3 发票与凭证</h3>
+          <p>客户提供完整开票信息的，本公司依法为所有交易开具电子增值税发票。款项须汇入本公司正式账户或取得本公司出具的收据方视为有效支付。</p>
+          <div class="note">提示：我们<b>绝不会</b>要求客户将款项转入合同／报价单以外的个人账户。如有疑问，请先致电 <b>0326 663 096</b> 核实后再付款。</div>
+
+          <h3>3.4 逾期付款</h3>
+          <p>客户逾期付款超过约定期限的，本公司在提前至少 7 天通知后，有权暂停支持服务、暂时冻结软件账号，直至欠款结清。</p>
+        </section>
+
+        <section id="complaint-zh">
+          <h2>4. 反馈、请求及投诉的接收与处理程序</h2>
+          <h3>4.1 受理渠道</h3>
+          <ul>
+            <li>电话 / Zalo：<b>0326 663 096</b>（工作时间）</li>
+            <li>到公司现场提出，或通过对接的业务人员提出</li>
+          </ul>
+
+          <h3>4.2 处理流程</h3>
+          <ol>
+            <li><b>第一步 — 受理：</b>本公司接收反馈／投诉，并在 <b>24 个工作小时</b>内向客户确认，记录内容、联系方式及相关凭证。</li>
+            <li><b>第二步 — 核实：</b>在 <b>3 个工作日</b>内，责任部门核查资料，比对合同、系统日志、交接记录，必要时派技术人员现场检查。</li>
+            <li><b>第三步 — 解决：</b>自受理之日起 <b>7 个工作日</b>内提出处理方案并通知客户。需技术鉴定的复杂案件，最长不超过 <b>15 个工作日</b>，并向客户说明延期理由。</li>
+            <li><b>第四步 — 反馈结果与结案：</b>处理结果以书面或 Zalo／电话方式告知。客户确认已解决后方可结案。</li>
+          </ol>
+
+          <h3>4.3 处理原则与最终机制</h3>
+          <p>本公司以协商、善意为基础处理，尊重消费者合法权益。双方无法达成一致的，可提交消费者权益保护主管机关调解，或依越南法律提交有管辖权的法院解决。</p>
+        </section>
+
+        <section id="conditions-zh">
+          <h2>5. 提供商品或服务的条件与限制</h2>
+          <ul>
+            <li><b>客户对象：</b>年满 18 周岁、具有完全民事行为能力的组织、个体工商户及个人，从事或管理酒店、旅馆、出租公寓等住宿场所。</li>
+            <li><b>供应范围：</b>商品与服务在越南境内提供。上门安装优先覆盖本公司设有技术团队的区域；偏远地区可能产生差旅费用，或改为远程指导安装。</li>
+            <li><b>技术条件：</b>软件、智能门锁、智能水电表的运行要求场所具备最低基础条件（稳定电源、互联网连接、内部网络、门体/管井规格匹配）。不满足条件的，本公司有权拒绝实施或要求客户先行改造。</li>
+            <li><b>定制订单：</b>特殊配置、大批量设备或定制软件可能需要预付定金，交付周期相应延长。</li>
+            <li><b>数量限制：</b>出现缺货、订单信息不实、存在欺诈或囤积倒卖迹象、客户此前严重违约等情形时，本公司有权限制订购数量、拒绝或取消订单。</li>
+            <li><b>禁止行为：</b>利用产品或服务进行非法监控、侵犯隐私、非法收集住客信息；破解、复制、再分发软件；用于违法活动。违反者服务将被终止且不予退费。</li>
+            <li><b>住宿申报责任：</b>客户须自行履行住宿登记、申报义务并依法保护住客数据；软件仅为辅助工具。</li>
+            <li>本公司不提供越南法律规定的禁止经营或限制经营目录内的商品与服务。</li>
+          </ul>
+        </section>
+
+        <section id="delivery-zh">
+          <h2>6. 配送、换货/退货及退款政策</h2>
+
+          <h3>A. 商品部分（智能门锁、智能水电表、读卡器等）</h3>
+          <p><b>A.1 配送</b></p>
+          <ul>
+            <li>订单处理时间：确认订单并完成付款／定金后 1–2 个工作日。</li>
+            <li>预计送达时间：视地区为 <b>2–5 个工作日</b>；大批量或定制配置订单按合同约定进度交付。</li>
+            <li>方式：第三方快递、公司车辆配送，或随上门安装一并交付。</li>
+            <li>运费在报价单中明确列示；达到当期活动金额标准的订单可享免运费。</li>
+            <li>请客户<b>在收货时检查包裹状态</b>。发现包装破损、凹陷、封条缺失的，请与配送人员当场制单并于当日通知本公司。</li>
+            <li>因不可抗力（自然灾害、疫情、罢工、运输事故）导致延迟的，本公司将通知客户并重新商定交付时间。</li>
+          </ul>
+
+          <p><b>A.2 换货 / 退货</b></p>
+          <table>
+            <tr><th>情形</th><th>时限</th><th>处理方式</th></tr>
+            <tr><td>发错型号、数量不符、配件缺失</td><td>收货之日起 7 天</td><td>更换正确商品，运费由本公司承担</td></tr>
+            <tr><td>厂家技术故障，未经安装或不当使用</td><td>收货之日起 7 天</td><td>换新或全额退款</td></tr>
+            <tr><td>保修期内出现技术故障</td><td>按保修卡载明期限（通常 12 个月）</td><td>免费保修、维修或更换配件</td></tr>
+            <tr><td>客户改变主意，非商品自身问题</td><td>收货之日起 7 天</td><td>仅限封条完好、原包装、未安装的商品；往返运费由客户承担</td></tr>
+          </table>
+          <p><b>以下情形不适用换货/退货：</b>已安装于工程并经机械改动的商品；因跌落、进水、短路、雷击、电压使用不当导致损坏；经第三方拆卸、维修的商品；保修标签缺失或无购货凭证；按客户特殊要求定制生产的商品。</p>
+
+          <p><b>A.3 退款</b></p>
+          <ul>
+            <li>按客户原支付方式退款；现金支付的，按客户提供的账户以转账方式退还。</li>
+            <li>退款时限：自本公司收到退回商品并确认符合退款条件之日起 <b>7–14 个工作日</b>。</li>
+            <li>属本公司责任的情形，客户无需承担任何退款手续费。</li>
+          </ul>
+
+          <h3>B. 服务部分（管理软件、安装、技术支持）</h3>
+          <p><b>B.1 服务交付方式</b></p>
+          <ul>
+            <li>酒店管理软件通过互联网提供，或安装于客户的服务器／工作站。首期款支付完成后，本公司在 <b>1–3 个工作日内交付账号</b>。</li>
+            <li>服务内容包括：系统初始化、房型与价格目录配置、设备对接（门锁、水电表、读卡器）、对客户人员的使用培训及运营支持。</li>
+            <li>安装服务按双方商定的时间在客户场所实施，以<b>验收交接记录</b>作为完成标志。</li>
+            <li>软件定期更新升级。系统维护如影响使用，本公司提前至少 24 小时通知，并优先安排在非高峰时段。</li>
+          </ul>
+
+          <p><b>B.2 服务终止政策</b></p>
+          <ul>
+            <li><b>客户主动终止：</b>应在当前订阅周期结束前至少 <b>15 天</b>通知本公司。服务持续至已付费周期届满。</li>
+            <li><b>本公司终止：</b>客户严重违反使用条款（第 5 条）、经书面催告后逾期付款超过 30 天，或将服务用于违法目的的。本公司提前至少 7 天通知，但依有权机关要求须立即停止的除外。</li>
+            <li><b>终止后的数据：</b>客户可在终止之日起 <b>30 天</b>内要求导出自有数据。逾期数据可能被永久删除且无法恢复。</li>
+          </ul>
+
+          <p><b>B.3 服务退款</b></p>
+          <ul>
+            <li>服务尚未激活／账号尚未交付的：<b>全额</b>退还已付款项。</li>
+            <li>本公司无法按承诺提供服务，或属本公司责任的系统故障连续超过 <b>72 小时</b>的：按订阅周期未使用部分比例退款，或由客户选择等额免费延期。</li>
+            <li>客户因自身原因中途终止的：当前使用周期的订阅费<b>不予退还</b>，服务持续至周期届满。</li>
+            <li>已实施并验收的安装、实施与培训费用不在退款范围内。</li>
+            <li>退款时限：自双方就方案达成一致之日起 <b>7–14 个工作日</b>。</li>
+          </ul>
+        </section>
+
+        <section id="support-zh">
+          <h2>7. 在线支持方式</h2>
+          <ul>
+            <li><b>热线 / Zalo：</b>0326 663 096 —— 销售咨询、技术支持、投诉受理。</li>
+            <li><b>远程协助</b>：通过远程控制软件（TeamViewer/UltraViewer 或同类工具）直接在客户电脑上排查软件故障，须经客户同意后进行。</li>
+            <li><b>Zalo 视频通话／图片指导</b>：适用于简单的设备故障。</li>
+            <li><b>上门支持</b>：无法远程解决时派技术人员到现场处理。</li>
+          </ul>
+          <table>
+            <tr><th>支持时间</th><th>范围</th></tr>
+            <tr><td>周一至周六 08:00 – 18:00</td><td>咨询、报价、常规技术支持、使用培训</td></tr>
+            <tr><td>非工作时间、周日及节假日</td><td>影响运营的紧急故障（无法开门、系统断连、无法办理入住/退房）</td></tr>
+          </table>
+          <p>目标响应时间：紧急故障 <b>2 小时</b>内响应；常规请求 <b>24 个工作小时</b>内响应。</p>
+        </section>
+
+        <section id="compliance-zh">
+          <h2>8. 遵守相关法令的承诺</h2>
+          <p>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN（新纪元科技有限责任公司）郑重承诺：</p>
+          <ul>
+            <li>经营活动遵守越南法律，包括但不限于：《民法典》《商法》《消费者权益保护法》《电子交易法》《网络信息安全法》《网络安全法》《知识产权法》《产品与商品质量法》以及有关电子商务、个人数据保护的各项规定；</li>
+            <li><b>完整、准确、真实</b>地提供商品、服务及价格信息，不作引人误解的广告；</li>
+            <li>经营来源清晰、具备合法票据的商品，符合技术标准及质量、安全规定；</li>
+            <li>依法完整履行发票、会计与税务义务；</li>
+            <li>保护客户及使用者的个人数据，仅在已告知并获得同意的范围内收集和使用数据；</li>
+            <li>尊重第三方知识产权，并保护本公司自主开发软件的知识产权；</li>
+            <li>严格履行保修、售后承诺，按本页公布的政策处理客户投诉；</li>
+            <li>依有权国家机关的合法要求予以配合并提供信息。</li>
+          </ul>
+          <p>上述政策自公布之日起生效，并可能依据法律规定或经营实际予以更新，最新版本始终发布于本页。因本政策产生的争议，双方应本着协商精神解决；协商不成的，提交越南有管辖权的法院解决。</p>
+          <div class="updated">最后更新：2026 年 7 月 28 日 —— 如有疑问请致电 0326 663 096。</div>
+        </section>
+      </div>
+
+      <!-- ============ ENGLISH ============ -->
+      <div class="lang-block" data-block="en">
+
+        <section id="privacy-en">
+          <h2>1. Privacy Policy</h2>
+          <p>TAN KY NGUYEN TECHNOLOGY CO., LTD (CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN, the “Company”, “we”) respects and is committed to protecting our customers' personal information. This policy explains how we collect, use, store and safeguard your data when you visit our website, request a consultation, or use our products and services.</p>
+
+          <h3>1.1. Purpose and scope of data collection</h3>
+          <p>We collect only the minimum information necessary to serve our customers, including:</p>
+          <ul>
+            <li>Contact person's name, phone number, Zalo ID and email address;</li>
+            <li>Name and address of the business premises (hotel, guesthouse, rental apartment) for quotation, delivery, installation and warranty purposes;</li>
+            <li>Consultation requests, order history and technical support history;</li>
+            <li>For the management software: operational data entered by the customer into the system (room information, bookings, meter readings, unlock logs, etc.).</li>
+          </ul>
+          <p>Providing information is voluntary. Customers may decline, but in that case we may be unable to provide quotations, delivery, installation or technical support.</p>
+
+          <h3>1.2. Scope of data use</h3>
+          <ul>
+            <li>Consultation, quotation, conclusion and performance of sales and service contracts;</li>
+            <li>Delivery, installation, user training, warranty and maintenance;</li>
+            <li>Technical support and handling of feedback and complaints;</li>
+            <li>Notices about software updates, policy changes or promotions (customers may opt out at any time);</li>
+            <li>Compliance with accounting, tax and other statutory obligations.</li>
+          </ul>
+          <p>We <b>do not sell, trade or rent</b> customers' personal information to third parties for commercial purposes. Information is shared only: (i) with carriers and installation partners, strictly to the extent needed for delivery and installation; (ii) with data hosting providers bound by confidentiality agreements; (iii) upon lawful request of competent state authorities.</p>
+
+          <h3>1.3. Data retention period</h3>
+          <p>Personal data is retained throughout the period the customer uses our products and services, and for the period necessary thereafter for warranty, dispute resolution and statutory record-keeping (at minimum, the periods required by accounting law). After that, data is deleted or anonymised, unless the customer requests earlier deletion and such deletion is not contrary to law.</p>
+
+          <h3>1.4. Entity collecting and managing the data</h3>
+          <ul>
+            <li><b>Entity:</b> CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN (Tan Ky Nguyen Technology Co., Ltd)</li>
+            <li><b>Phone / Zalo:</b> 0326 663 096</li>
+          </ul>
+
+          <h3>1.5. Customer rights over their data</h3>
+          <p>Customers may ask us to review, update or correct their information; to stop using it for marketing; to delete their data; or may lodge a complaint about misuse of their information. Requests can be made via phone/Zalo <b>0326 663 096</b> and will be handled within <b>7 working days</b>.</p>
+
+          <h3>1.6. Security commitment</h3>
+          <ul>
+            <li>Personal data is protected by reasonable technical measures: role-based access control, encrypted transmission and periodic backups;</li>
+            <li>Only authorised personnel may access customer data, and all are bound by confidentiality undertakings;</li>
+            <li>In the event of a security incident affecting customer data, we will notify affected customers and the competent authorities as required by law;</li>
+            <li>Customers are responsible for safeguarding their software login credentials and must notify us immediately upon any sign of unauthorised access.</li>
+          </ul>
+        </section>
+
+        <section id="pricing-en">
+          <h2>2. Pricing Policy</h2>
+          <ul>
+            <li>All prices for products, devices and services are listed in <b>Vietnamese Dong (VND)</b>.</li>
+            <li>This website is for product presentation purposes; the binding price of each order is set out in the <b>quotation</b> or <b>contract</b> issued by the Company, based on quantity, configuration, installation scale and deployment location.</li>
+            <li>Quotations state: unit price, quantity, VAT (if applicable), shipping cost, installation cost, warranty period and quotation validity.</li>
+            <li>The hotel management software is offered either as a periodic subscription (monthly/annual) or as a perpetual licence, depending on the package chosen; subscription fees are disclosed before the customer confirms.</li>
+            <li>Prices may change over time due to cost, exchange rate or tax changes. Any change is <b>not applied retroactively</b> to orders and contracts already confirmed.</li>
+            <li>For subscription services, we give at least <b>30 days' notice</b> of any fee adjustment; customers may choose not to renew the next term.</li>
+            <li>Promotions and volume discounts apply under the conditions published at the relevant time and are not cumulative unless otherwise agreed.</li>
+          </ul>
+        </section>
+
+        <section id="payment-en">
+          <h2>3. Payment Policy</h2>
+          <h3>3.1. Payment methods</h3>
+          <ul>
+            <li><b>Bank transfer</b> to the Company's account (details stated on the quotation / contract / invoice);</li>
+            <li><b>Cash</b> upon delivery or at the Company's office, against a valid receipt;</li>
+            <li><b>Cash on delivery (COD)</b> for certain individual device orders, as agreed.</li>
+          </ul>
+
+          <h3>3.2. Payment schedule</h3>
+          <table>
+            <tr><th>Transaction type</th><th>Payment schedule</th></tr>
+            <tr><td>Individual devices (locks, meters, card readers)</td><td>100% on ordering or on delivery (COD)</td></tr>
+            <tr><td>Turnkey installation projects</td><td>30–50% advance on signing, balance after acceptance testing</td></tr>
+            <tr><td>Software subscription</td><td>Paid in advance per term (monthly/annual) before the term begins</td></tr>
+          </table>
+
+          <h3>3.3. Invoices and documentation</h3>
+          <p>The Company issues electronic VAT invoices for all transactions in accordance with law, provided the customer supplies complete invoicing details. Payment is only deemed valid when made to the Company's official account or evidenced by a receipt issued by the Company.</p>
+          <div class="note">Warning: We will <b>never</b> ask customers to transfer money to a personal account not stated in the contract/quotation. If in doubt, call <b>0326 663 096</b> to verify before paying.</div>
+
+          <h3>3.4. Late payment</h3>
+          <p>If payment is overdue beyond the agreed deadline, the Company may suspend support services and temporarily lock the software account after at least 7 days' prior notice, until the outstanding amount is settled.</p>
+        </section>
+
+        <section id="complaint-en">
+          <h2>4. Procedure for Receiving and Handling Feedback, Requests and Complaints</h2>
+          <h3>4.1. Channels</h3>
+          <ul>
+            <li>Phone / Zalo: <b>0326 663 096</b> (business hours)</li>
+            <li>In person at our office, or through your assigned sales representative</li>
+          </ul>
+
+          <h3>4.2. Handling process</h3>
+          <ol>
+            <li><b>Step 1 — Receipt:</b> We acknowledge the feedback/complaint to the customer within <b>24 working hours</b>, recording its content, contact details and supporting documents.</li>
+            <li><b>Step 2 — Verification:</b> Within <b>3 working days</b>, the responsible department reviews the file against the contract, system logs and handover records, and dispatches a technician for on-site inspection if needed.</li>
+            <li><b>Step 3 — Resolution:</b> We propose a resolution and notify the customer within <b>7 working days</b> of receipt. For complex cases requiring technical assessment, the maximum period is <b>15 working days</b>, and the customer is informed of the reason for the extension.</li>
+            <li><b>Step 4 — Response and closure:</b> The outcome is communicated in writing or via Zalo/phone. The case is closed only once the customer confirms it has been resolved.</li>
+          </ol>
+
+          <h3>4.3. Principles and final recourse</h3>
+          <p>We resolve matters through good-faith negotiation, respecting consumers' lawful rights. If no agreement is reached, the matter may be submitted for mediation to the state authority for consumer protection, or resolved by the competent court under Vietnamese law.</p>
+        </section>
+
+        <section id="conditions-en">
+          <h2>5. Conditions and Limitations on the Supply of Goods and Services</h2>
+          <ul>
+            <li><b>Eligible customers:</b> Organisations, business households and individuals aged 18 or over with full civil capacity, operating or managing hotels, guesthouses, rental apartments and similar accommodation facilities.</li>
+            <li><b>Territorial scope:</b> Goods and services are supplied within Vietnam. On-site installation is prioritised in areas where the Company has technical teams; for remote areas, travel costs may apply or installation may be guided remotely.</li>
+            <li><b>Technical conditions:</b> Operating the software, smart locks and smart meters requires minimum infrastructure at the premises (stable power supply, internet connectivity, local network, compatible door/riser specifications). Where these are not met, the Company may decline deployment or require prior modification by the customer.</li>
+            <li><b>Custom orders:</b> Devices with bespoke configurations, large quantities, or customised software may require a deposit and longer lead times.</li>
+            <li><b>Quantity limits:</b> The Company may limit order quantities, or refuse or cancel orders, in cases of stock unavailability, inaccurate order information, indications of fraud, hoarding or unauthorised resale, or a prior material breach of contract by the customer.</li>
+            <li><b>Prohibited uses:</b> Using the products or services for unlawful surveillance, invasion of privacy or unlawful collection of guest information; tampering with, cracking, copying or redistributing the software; or any unlawful activity. Breach results in termination of service without refund.</li>
+            <li><b>Accommodation declaration:</b> Customers are solely responsible for guest registration and declaration obligations and for protecting guest data as required by law; the software is only a supporting tool.</li>
+            <li>The Company does not supply goods or services on the prohibited or restricted business lists under Vietnamese law.</li>
+          </ul>
+        </section>
+
+        <section id="delivery-en">
+          <h2>6. Delivery, Exchange/Return and Refund Policy</h2>
+
+          <h3>A. For goods (smart locks, smart meters, card readers, etc.)</h3>
+          <p><b>A.1. Delivery</b></p>
+          <ul>
+            <li>Order processing: 1–2 working days after order confirmation and payment/deposit.</li>
+            <li>Estimated delivery: <b>2–5 working days</b> depending on region; large or custom-configured orders are delivered per the schedule in the contract.</li>
+            <li>Methods: third-party courier, Company vehicle, or delivered together with on-site installation.</li>
+            <li>Shipping costs are stated in the quotation; orders meeting the applicable campaign threshold may qualify for free shipping.</li>
+            <li>Please <b>inspect the package on receipt</b>. If the packaging is torn, dented or the seal is missing, please record it with the delivery staff and notify us the same day.</li>
+            <li>Where delivery is delayed by force majeure (natural disaster, epidemic, strike, transport incident), we will notify the customer and agree a revised delivery date.</li>
+          </ul>
+
+          <p><b>A.2. Exchange / return</b></p>
+          <table>
+            <tr><th>Situation</th><th>Time limit</th><th>Resolution</th></tr>
+            <tr><td>Wrong model, wrong quantity, missing accessories</td><td>7 days from receipt</td><td>Correct item exchanged; Company bears all shipping costs</td></tr>
+            <tr><td>Manufacturing defect, not yet installed or misused</td><td>7 days from receipt</td><td>Replacement or 100% refund</td></tr>
+            <tr><td>Technical fault arising during the warranty period</td><td>Per the warranty card (typically 12 months)</td><td>Free warranty repair or parts replacement</td></tr>
+            <tr><td>Change of mind, no fault in the product</td><td>7 days from receipt</td><td>Accepted only if seals and original packaging are intact and the item is uninstalled; customer bears two-way shipping</td></tr>
+          </table>
+          <p><b>Exchange/return does not apply to:</b> items already installed into a building and mechanically altered; damage from dropping, water ingress, short circuit, lightning or incorrect voltage; items dismantled or repaired by third parties; missing warranty seal or absence of proof of purchase; goods manufactured to the customer's bespoke specifications.</p>
+
+          <p><b>A.3. Refunds</b></p>
+          <ul>
+            <li>Refunds are made through the customer's original payment method; cash payments are refunded by bank transfer to the account provided by the customer.</li>
+            <li>Refund period: <b>7–14 working days</b> from the date we receive the returned goods and confirm eligibility.</li>
+            <li>No refund processing fee is charged to the customer where the fault lies with the Company.</li>
+          </ul>
+
+          <h3>B. For services (management software, installation, technical support)</h3>
+          <p><b>B.1. Method of service delivery</b></p>
+          <ul>
+            <li>The hotel management software is delivered over the internet or installed on the customer's server/workstation. After the first-term payment, the Company <b>hands over the account within 1–3 working days</b>.</li>
+            <li>Services include: system initialisation, room and rate configuration, device integration (locks, meters, card readers), user training for the customer's staff, and operational support.</li>
+            <li>Installation services are performed at the customer's premises on a mutually agreed schedule and conclude with an <b>acceptance and handover record</b>.</li>
+            <li>The software is updated and upgraded periodically. Where maintenance will affect usage, we give at least 24 hours' notice and schedule it outside peak hours where possible.</li>
+          </ul>
+
+          <p><b>B.2. Termination policy</b></p>
+          <ul>
+            <li><b>Termination by the customer:</b> notify us at least <b>15 days</b> before the end of the current subscription term. The service remains active until the end of the paid term.</li>
+            <li><b>Termination by the Company:</b> where the customer materially breaches the terms of use (Section 5), is more than 30 days late in payment after written reminder, or uses the service for unlawful purposes. We give at least 7 days' notice, except where immediate suspension is required by a competent authority.</li>
+            <li><b>Data after termination:</b> Customers may request an export of their data within <b>30 days</b> of termination. After that period, data may be permanently deleted and cannot be recovered.</li>
+          </ul>
+
+          <p><b>B.3. Service refunds</b></p>
+          <ul>
+            <li>If the service has not been activated / the account has not been handed over: <b>100%</b> of amounts paid are refunded.</li>
+            <li>If we cannot deliver the service as committed, or a system failure attributable to the Company lasts more than <b>72 continuous hours</b>: a pro-rata refund for the unused portion of the subscription term, or an equivalent free extension, at the customer's option.</li>
+            <li>If the customer terminates mid-term for their own reasons: the subscription fee for the current term is <b>non-refundable</b> and the service continues until the end of that term.</li>
+            <li>Installation, deployment and training fees for work already performed and accepted are non-refundable.</li>
+            <li>Refund period: <b>7–14 working days</b> from the date both parties agree on the resolution.</li>
+          </ul>
+        </section>
+
+        <section id="support-en">
+          <h2>7. Online Support Channels</h2>
+          <ul>
+            <li><b>Hotline / Zalo:</b> 0326 663 096 — sales consultation, technical support, complaint intake.</li>
+            <li><b>Remote support</b> via remote desktop software (TeamViewer/UltraViewer or equivalent) to troubleshoot software issues directly on the customer's computer, performed only with the customer's consent.</li>
+            <li><b>Video call / photo guidance via Zalo</b> for straightforward device issues.</li>
+            <li><b>On-site support:</b> a technician is dispatched to the premises where an issue cannot be resolved remotely.</li>
+          </ul>
+          <table>
+            <tr><th>Support hours</th><th>Scope</th></tr>
+            <tr><td>Monday – Saturday, 08:00 – 18:00</td><td>Consultation, quotations, standard technical support, user training</td></tr>
+            <tr><td>Outside hours, Sundays and public holidays</td><td>Emergency incidents affecting operations (doors cannot be opened, system disconnected, check-in/check-out unavailable)</td></tr>
+          </table>
+          <p>Target response times: emergencies within <b>2 hours</b>; standard requests within <b>24 working hours</b>.</p>
+        </section>
+
+        <section id="compliance-en">
+          <h2>8. Commitment to Legal Compliance</h2>
+          <p>CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN commits to:</p>
+          <ul>
+            <li>Conducting business in compliance with Vietnamese law, including but not limited to the Civil Code, the Commercial Law, the Law on Protection of Consumer Rights, the Law on E-Transactions, the Law on Network Information Security, the Law on Cybersecurity, the Law on Intellectual Property, the Law on Product and Goods Quality, and regulations on e-commerce and personal data protection;</li>
+            <li>Providing <b>complete, accurate and truthful</b> information about goods, services and prices, without misleading advertising;</li>
+            <li>Trading only in goods of clear origin with lawful documentation, meeting applicable technical, quality and safety standards;</li>
+            <li>Fully discharging invoicing, accounting and tax obligations;</li>
+            <li>Protecting the personal data of customers and users, and collecting and using data only within the scope notified and consented to;</li>
+            <li>Respecting third-party intellectual property rights and protecting the intellectual property in software developed by the Company;</li>
+            <li>Honouring warranty and after-sales commitments and resolving customer complaints under the policies published on this page;</li>
+            <li>Cooperating with and providing information to competent state authorities upon lawful request.</li>
+          </ul>
+          <p>These policies take effect on the date of publication and may be updated to align with legal requirements or business practice; the latest version is always published on this page. Disputes are resolved through negotiation in good faith; failing that, by the competent court under Vietnamese law.</p>
+          <div class="updated">Last updated: 28 July 2026 — For any questions, please call 0326 663 096.</div>
+        </section>
+      </div>
+
+    </article>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0326663096" style="color:#fff">0326 663 096</a></div>
+    <div><a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a></div>
+    <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+  </div>
+</footer>
+
+<script>
+const UI = {
+  vi:{
+    companyShort:"TÂN KỶ NGUYÊN", navProducts:"Sản phẩm", navSoftware:"Phần mềm",
+    navWhy:"Vì sao chọn chúng tôi", navContact:"Liên hệ", navPolicy:"Chính sách",
+    phTitle:"Chính sách &amp; Điều khoản",
+    phDesc:"CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN — Chính sách bảo mật, giá, thanh toán, khiếu nại, giao hàng, đổi trả, hoàn tiền và cam kết tuân thủ pháp luật.",
+    tocTitle:"NỘI DUNG",
+    tocPrivacy:"1. Chính sách bảo mật", tocPricing:"2. Chính sách giá", tocPayment:"3. Chính sách thanh toán",
+    tocComplaint:"4. Tiếp nhận & xử lý khiếu nại", tocConditions:"5. Điều kiện & hạn chế cung cấp",
+    tocDelivery:"6. Giao hàng, đổi trả & hoàn tiền", tocSupport:"7. Hỗ trợ trực tuyến",
+    tocCompliance:"8. Cam kết tuân thủ pháp luật",
+    ftPhone:"Điện thoại", ftPolicy:"Chính sách bảo mật & Điều khoản", ftRights:"Bảo lưu mọi quyền."
+  },
+  zh:{
+    companyShort:"新纪元科技", navProducts:"产品", navSoftware:"软件",
+    navWhy:"为什么选择我们", navContact:"联系我们", navPolicy:"政策条款",
+    phTitle:"政策与条款",
+    phDesc:"新纪元科技有限责任公司 —— 隐私政策、定价政策、支付政策、投诉处理、配送、换退货、退款政策及守法承诺。",
+    tocTitle:"目录",
+    tocPrivacy:"1. 隐私政策", tocPricing:"2. 定价政策", tocPayment:"3. 支付政策",
+    tocComplaint:"4. 反馈与投诉处理", tocConditions:"5. 提供条件与限制",
+    tocDelivery:"6. 配送、换退货与退款", tocSupport:"7. 在线支持方式",
+    tocCompliance:"8. 遵守法令承诺",
+    ftPhone:"电话", ftPolicy:"隐私政策与条款", ftRights:"版权所有。"
+  },
+  en:{
+    companyShort:"TAN KY NGUYEN TECH", navProducts:"Products", navSoftware:"Software",
+    navWhy:"Why Us", navContact:"Contact", navPolicy:"Policies",
+    phTitle:"Policies &amp; Terms",
+    phDesc:"TAN KY NGUYEN TECHNOLOGY CO., LTD — Privacy, pricing, payment, complaints, delivery, returns, refunds and legal compliance commitment.",
+    tocTitle:"CONTENTS",
+    tocPrivacy:"1. Privacy Policy", tocPricing:"2. Pricing Policy", tocPayment:"3. Payment Policy",
+    tocComplaint:"4. Feedback & Complaints", tocConditions:"5. Conditions & Limitations",
+    tocDelivery:"6. Delivery, Returns & Refunds", tocSupport:"7. Online Support",
+    tocCompliance:"8. Legal Compliance",
+    ftPhone:"Phone", ftPolicy:"Privacy Policy & Terms", ftRights:"All rights reserved."
+  }
+};
+
+const SECTION_IDS = ["privacy","pricing","payment","complaint","conditions","delivery","support","compliance"];
+
+function setLang(lang){
+  const dict = UI[lang] || UI.vi;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    if(dict[k]) el.innerHTML = dict[k];
+  });
+  document.querySelectorAll(".lang-block").forEach(b=>{
+    b.classList.toggle("show", b.dataset.block === lang);
+  });
+  // keep anchor ids on the visible block so the table of contents always works
+  document.querySelectorAll(".lang-block").forEach(b=>{
+    const visible = b.dataset.block === lang;
+    b.querySelectorAll("section").forEach((s,i)=>{
+      s.id = visible ? SECTION_IDS[i] : SECTION_IDS[i] + "-" + b.dataset.block;
+    });
+  });
+  document.querySelectorAll(".lang-switch button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+  try{ localStorage.setItem("site_lang", lang); }catch(e){}
+}
+
+document.querySelectorAll(".lang-switch button").forEach(b=>{
+  b.addEventListener("click", ()=> setLang(b.dataset.lang));
+});
+document.getElementById("menuBtn").addEventListener("click", ()=>{
+  document.getElementById("navLinks").classList.toggle("open");
+});
+
+let saved = "vi";
+try{ saved = localStorage.getItem("site_lang") || "vi"; }catch(e){}
+setLang(saved);
+
+if(location.hash){
+  const target = document.querySelector(location.hash);
+  if(target) target.scrollIntoView();
+}
+</script>
+</body>
+</html>

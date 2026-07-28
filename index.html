@@ -105,16 +105,24 @@
   .contact-item .ci{font-size:22px}
   .contact-item a:hover{text-decoration:underline}
 
+  /* Policies */
+  .policies{background:var(--white);padding:72px 0}
+  .policy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .policy-grid a{background:var(--bg);border:1px solid #eef2f9;border-radius:12px;padding:18px 20px;font-size:14.5px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px;transition:.2s}
+  .policy-grid a:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-3px)}
+  .policy-grid a::before{content:"›";color:var(--primary);font-weight:900;font-size:19px}
+
   /* Footer */
   footer{background:var(--dark);color:#8fa1c0;padding:36px 0;font-size:14px}
   footer .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
   footer b{color:#fff}
+  footer a:hover{color:#fff}
 
   /* ===== Responsive ===== */
   @media(max-width:960px){
     .showcase .container,.contact-box{grid-template-columns:1fr}
     .products{grid-template-columns:1fr 1fr}
-    .why-grid{grid-template-columns:1fr 1fr}
+    .why-grid,.policy-grid{grid-template-columns:1fr 1fr}
     .hero h1{font-size:32px}
     .hero{padding:60px 0 70px}
     .nav-links{position:fixed;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;border-bottom:1px solid #e6ecf5;display:none}
@@ -122,7 +130,7 @@
     .menu-btn{display:block}
   }
   @media(max-width:600px){
-    .products,.why-grid{grid-template-columns:1fr}
+    .products,.why-grid,.policy-grid{grid-template-columns:1fr}
     .contact-box{padding:36px 24px}
     .sec-head h2{font-size:26px}
     .logo{font-size:13px}
@@ -142,6 +150,7 @@
       <a href="#software" data-i18n="navSoftware">Phần mềm</a>
       <a href="#why" data-i18n="navWhy">Vì sao chọn chúng tôi</a>
       <a href="#contact" data-i18n="navContact">Liên hệ</a>
+      <a href="policy.html" data-i18n="navPolicy">Chính sách</a>
     </nav>
     <div style="display:flex;align-items:center;gap:14px">
       <div class="lang-switch">
@@ -326,9 +335,31 @@
   </div>
 </section>
 
+<!-- Policies -->
+<section class="policies" id="policies">
+  <div class="container">
+    <div class="sec-head">
+      <span class="tag" data-i18n="polTag">CHÍNH SÁCH</span>
+      <h2 data-i18n="polTitle">Chính sách bảo mật &amp; Điều khoản</h2>
+      <p data-i18n="polDesc">Chúng tôi cam kết bảo vệ thông tin cá nhân của khách hàng, công khai minh bạch chính sách giá, thanh toán, giao hàng, đổi trả và tuân thủ đầy đủ quy định pháp luật.</p>
+    </div>
+    <div class="policy-grid">
+      <a href="policy.html#privacy" data-i18n="polL1">Chính sách bảo mật</a>
+      <a href="policy.html#pricing" data-i18n="polL2">Chính sách giá</a>
+      <a href="policy.html#payment" data-i18n="polL3">Chính sách thanh toán</a>
+      <a href="policy.html#complaint" data-i18n="polL4">Tiếp nhận &amp; xử lý khiếu nại</a>
+      <a href="policy.html#conditions" data-i18n="polL5">Điều kiện &amp; hạn chế cung cấp</a>
+      <a href="policy.html#delivery" data-i18n="polL6">Giao hàng, đổi trả &amp; hoàn tiền</a>
+      <a href="policy.html#support" data-i18n="polL7">Hỗ trợ trực tuyến</a>
+      <a href="policy.html#compliance" data-i18n="polL8">Cam kết tuân thủ pháp luật</a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="container">
     <div><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0326663096" style="color:#fff">0326 663 096</a></div>
+    <div><a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a></div>
     <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
   </div>
 </footer>
@@ -341,6 +372,7 @@ const I18N = {
     navSoftware: "Phần mềm",
     navWhy: "Vì sao chọn chúng tôi",
     navContact: "Liên hệ",
+    navPolicy: "Chính sách",
     heroTitle: 'Giải pháp công nghệ toàn diện cho <span>khách sạn &amp; căn hộ cho thuê</span>',
     heroDesc: "Phần mềm quản lý khách sạn, đồng hồ nước điện thông minh và khóa thông minh — tất cả trong một hệ sinh thái, giúp bạn quản lý dễ dàng, tiết kiệm chi phí và tăng doanh thu.",
     heroBtn1: "Tư vấn miễn phí",
@@ -394,7 +426,19 @@ const I18N = {
     ctTitle: "Liên hệ tư vấn miễn phí",
     ctDesc: "Gọi ngay cho chúng tôi để nhận tư vấn giải pháp phù hợp nhất với khách sạn / căn hộ của bạn. Hỗ trợ demo phần mềm trực tiếp.",
     ctZalo: "Zalo: 0326663096",
+    polTag: "CHÍNH SÁCH",
+    polTitle: "Chính sách bảo mật & Điều khoản",
+    polDesc: "Chúng tôi cam kết bảo vệ thông tin cá nhân của khách hàng, công khai minh bạch chính sách giá, thanh toán, giao hàng, đổi trả và tuân thủ đầy đủ quy định pháp luật.",
+    polL1: "Chính sách bảo mật",
+    polL2: "Chính sách giá",
+    polL3: "Chính sách thanh toán",
+    polL4: "Tiếp nhận & xử lý khiếu nại",
+    polL5: "Điều kiện & hạn chế cung cấp",
+    polL6: "Giao hàng, đổi trả & hoàn tiền",
+    polL7: "Hỗ trợ trực tuyến",
+    polL8: "Cam kết tuân thủ pháp luật",
     ftPhone: "Điện thoại",
+    ftPolicy: "Chính sách bảo mật & Điều khoản",
     ftRights: "Bảo lưu mọi quyền."
   },
   zh: {
@@ -403,6 +447,7 @@ const I18N = {
     navSoftware: "软件",
     navWhy: "为什么选择我们",
     navContact: "联系我们",
+    navPolicy: "政策条款",
     heroTitle: '面向<span>酒店与出租公寓</span>的一体化科技解决方案',
     heroDesc: "酒店管理软件、智能水电表、智能门锁——三位一体的生态系统，让您管理更轻松、成本更低、收益更高。",
     heroBtn1: "免费咨询",
@@ -456,7 +501,19 @@ const I18N = {
     ctTitle: "联系我们，免费咨询",
     ctDesc: "立即致电，我们将为您的酒店/公寓提供最合适的方案，并支持现场软件演示。",
     ctZalo: "Zalo：0326663096",
+    polTag: "政策条款",
+    polTitle: "隐私政策与条款",
+    polDesc: "我们承诺保护客户个人信息，公开透明地公布价格、支付、配送、换退货政策，并全面遵守相关法律法规。",
+    polL1: "隐私政策",
+    polL2: "定价政策",
+    polL3: "支付政策",
+    polL4: "反馈与投诉处理",
+    polL5: "提供条件与限制",
+    polL6: "配送、换退货与退款",
+    polL7: "在线支持方式",
+    polL8: "遵守法令承诺",
     ftPhone: "电话",
+    ftPolicy: "隐私政策与条款",
     ftRights: "版权所有。"
   },
   en: {
@@ -465,6 +522,7 @@ const I18N = {
     navSoftware: "Software",
     navWhy: "Why Us",
     navContact: "Contact",
+    navPolicy: "Policies",
     heroTitle: 'All-in-one technology solutions for <span>hotels &amp; rental apartments</span>',
     heroDesc: "Hotel management software, smart water & electricity meters, and smart locks — one integrated ecosystem to simplify management, cut costs, and grow revenue.",
     heroBtn1: "Free Consultation",
@@ -518,7 +576,19 @@ const I18N = {
     ctTitle: "Contact us for a free consultation",
     ctDesc: "Call us now for the best solution for your hotel / apartments. On-site software demo available.",
     ctZalo: "Zalo: 0326663096",
+    polTag: "POLICIES",
+    polTitle: "Privacy Policy & Terms",
+    polDesc: "We are committed to protecting our customers' personal data, publishing our pricing, payment, delivery and return policies transparently, and complying fully with applicable law.",
+    polL1: "Privacy Policy",
+    polL2: "Pricing Policy",
+    polL3: "Payment Policy",
+    polL4: "Feedback & Complaints",
+    polL5: "Conditions & Limitations",
+    polL6: "Delivery, Returns & Refunds",
+    polL7: "Online Support",
+    polL8: "Legal Compliance",
     ftPhone: "Phone",
+    ftPolicy: "Privacy Policy & Terms",
     ftRights: "All rights reserved."
   }
 };
