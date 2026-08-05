@@ -61,9 +61,18 @@
   .note{background:#f4f8ff;border-left:4px solid var(--primary);border-radius:8px;padding:14px 18px;font-size:14.5px;margin:14px 0}
   .updated{color:var(--muted);font-size:14px;margin-top:34px;padding-top:18px;border-top:1px solid #eef2f9}
 
-  footer{background:var(--dark);color:#8fa1c0;padding:36px 0;font-size:14px}
-  footer .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer{background:var(--dark);color:#8fa1c0;padding:48px 0 32px;font-size:14.5px;border-top:1px solid #22345c}
+  footer .container{display:flex;flex-direction:column}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr;gap:40px;margin-bottom:28px}
+  .footer-info h4{color:#fff;font-size:16px;font-weight:700;margin-bottom:12px}
+  .footer-info p{margin-bottom:8px;line-height:1.6}
+  .footer-links{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .footer-bottom{border-top:1px solid #22345c;padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13.5px}
   footer a:hover{color:#fff}
+  @media(max-width:768px){
+    .footer-grid{grid-template-columns:1fr;gap:24px}
+    .footer-links{align-items:flex-start}
+  }
 
   .lang-block{display:none}
   .lang-block.show{display:block}
@@ -773,9 +782,19 @@
 
 <footer>
   <div class="container">
-    <div><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0344578193" style="color:#fff">0344 578 193</a></div>
-    <div><a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a></div>
-    <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+    <div class="footer-grid">
+      <div class="footer-info">
+        <h4 data-i18n="ftCompanyName">CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN</h4>
+        <p data-i18n="ftAddress">Địa chỉ: Tầng 3, lô 3, Toà thương mại Cát Tường Eco, đường Lê Thái Tổ, phường Võ Cường, Tỉnh Bắc Ninh, Việt Nam</p>
+        <p><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0344578193" style="color:#fff">0344 578 193</a> &nbsp;|&nbsp; Email: <a href="mailto:supports@eraworks.vn" style="color:#fff">supports@eraworks.vn</a></p>
+      </div>
+      <div class="footer-links">
+        <a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+    </div>
   </div>
 </footer>
 
@@ -791,7 +810,9 @@ const UI = {
     tocComplaint:"4. Tiếp nhận & xử lý khiếu nại", tocConditions:"5. Điều kiện & hạn chế cung cấp",
     tocDelivery:"6. Giao hàng, đổi trả & hoàn tiền", tocSupport:"7. Hỗ trợ trực tuyến",
     tocCompliance:"8. Cam kết tuân thủ pháp luật",
-    ftPhone:"Điện thoại", ftPolicy:"Chính sách bảo mật & Điều khoản", ftRights:"Bảo lưu mọi quyền."
+    ftPhone:"Điện thoại", ftPolicy:"Chính sách bảo mật & Điều khoản", ftRights:"Bảo lưu mọi quyền.",
+    ftCompanyName: "CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN",
+    ftAddress: "Địa chỉ: Tầng 3, lô 3, Toà thương mại Cát Tường Eco, đường Lê Thái Tổ, phường Võ Cường, Tỉnh Bắc Ninh, Việt Nam"
   },
   zh:{
     companyShort:"新纪元科技", navProducts:"产品", navSoftware:"软件",
@@ -803,7 +824,9 @@ const UI = {
     tocComplaint:"4. 反馈与投诉处理", tocConditions:"5. 提供条件与限制",
     tocDelivery:"6. 配送、换退货与退款", tocSupport:"7. 在线支持方式",
     tocCompliance:"8. 遵守法令承诺",
-    ftPhone:"电话", ftPolicy:"隐私政策与条款", ftRights:"版权所有。"
+    ftPhone:"电话", ftPolicy:"隐私政策与条款", ftRights:"版权所有。",
+    ftCompanyName: "新纪元科技有限责任公司",
+    ftAddress: "地址：越南北宁省武强坊黎太祖路吉墙Eco商业楼3层3号"
   },
   en:{
     companyShort:"TAN KY NGUYEN TECH", navProducts:"Products", navSoftware:"Software",
@@ -815,7 +838,9 @@ const UI = {
     tocComplaint:"4. Feedback & Complaints", tocConditions:"5. Conditions & Limitations",
     tocDelivery:"6. Delivery, Returns & Refunds", tocSupport:"7. Online Support",
     tocCompliance:"8. Legal Compliance",
-    ftPhone:"Phone", ftPolicy:"Privacy Policy & Terms", ftRights:"All rights reserved."
+    ftPhone:"Phone", ftPolicy:"Privacy Policy & Terms", ftRights:"All rights reserved.",
+    ftCompanyName: "TAN KY NGUYEN TECHNOLOGY CO., LTD",
+    ftAddress: "Address: 3rd Floor, Lot 3, Cat Tuong Eco Commercial Building, Le Thai To Street, Vo Cuong Ward, Bac Ninh Province, Vietnam"
   }
 };
 

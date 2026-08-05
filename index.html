@@ -115,10 +115,19 @@
   .policy-grid a::before{content:"›";color:var(--primary);font-weight:900;font-size:19px}
 
   /* Footer */
-  footer{background:var(--dark);color:#8fa1c0;padding:36px 0;font-size:14px}
-  footer .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer{background:var(--dark);color:#8fa1c0;padding:48px 0 32px;font-size:14.5px;border-top:1px solid #22345c}
+  footer .container{display:flex;flex-direction:column}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr;gap:40px;margin-bottom:28px}
+  .footer-info h4{color:#fff;font-size:16px;font-weight:700;margin-bottom:12px}
+  .footer-info p{margin-bottom:8px;line-height:1.6}
+  .footer-links{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .footer-bottom{border-top:1px solid #22345c;padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13.5px}
   footer b{color:#fff}
   footer a:hover{color:#fff}
+  @media(max-width:768px){
+    .footer-grid{grid-template-columns:1fr;gap:24px}
+    .footer-links{align-items:flex-start}
+  }
 
   /* ===== Responsive ===== */
   @media(max-width:960px){
@@ -362,9 +371,19 @@
 
 <footer>
   <div class="container">
-    <div><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0344578193" style="color:#fff">0344 578 193</a></div>
-    <div><a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a></div>
-    <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+    <div class="footer-grid">
+      <div class="footer-info">
+        <h4 data-i18n="ftCompanyName">CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN</h4>
+        <p data-i18n="ftAddress">Địa chỉ: Tầng 3, lô 3, Toà thương mại Cát Tường Eco, đường Lê Thái Tổ, phường Võ Cường, Tỉnh Bắc Ninh, Việt Nam</p>
+        <p><span data-i18n="ftPhone">Điện thoại</span>: <a href="tel:0344578193" style="color:#fff">0344 578 193</a> &nbsp;|&nbsp; Email: <a href="mailto:supports@eraworks.vn" style="color:#fff">supports@eraworks.vn</a></p>
+      </div>
+      <div class="footer-links">
+        <a href="policy.html" data-i18n="ftPolicy">Chính sách bảo mật &amp; Điều khoản</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 <span data-i18n="ftRights">Bảo lưu mọi quyền.</span></div>
+    </div>
   </div>
 </footer>
 
@@ -443,7 +462,9 @@ const I18N = {
     polL8: "Cam kết tuân thủ pháp luật",
     ftPhone: "Điện thoại",
     ftPolicy: "Chính sách bảo mật & Điều khoản",
-    ftRights: "Bảo lưu mọi quyền."
+    ftRights: "Bảo lưu mọi quyền.",
+    ftCompanyName: "CÔNG TY TNHH CÔNG NGHỆ TÂN KỶ NGUYÊN",
+    ftAddress: "Địa chỉ: Tầng 3, lô 3, Toà thương mại Cát Tường Eco, đường Lê Thái Tổ, phường Võ Cường, Tỉnh Bắc Ninh, Việt Nam"
   },
   zh: {
     companyShort: '<span style="color:#061E36">新纪元</span><span style="color:#04A8A1">科技</span>',
@@ -518,7 +539,9 @@ const I18N = {
     polL8: "遵守法令承诺",
     ftPhone: "电话",
     ftPolicy: "隐私政策与条款",
-    ftRights: "版权所有。"
+    ftRights: "版权所有。",
+    ftCompanyName: "新纪元科技有限责任公司",
+    ftAddress: "地址：越南北宁省武强坊黎太祖路吉墙Eco商业楼3层3号"
   },
   en: {
     companyShort: '<span style="color:#061E36">ERA</span><span style="color:#04A8A1">WORKS</span>',
@@ -593,7 +616,9 @@ const I18N = {
     polL8: "Legal Compliance",
     ftPhone: "Phone",
     ftPolicy: "Privacy Policy & Terms",
-    ftRights: "All rights reserved."
+    ftRights: "All rights reserved.",
+    ftCompanyName: "TAN KY NGUYEN TECHNOLOGY CO., LTD",
+    ftAddress: "Address: 3rd Floor, Lot 3, Cat Tuong Eco Commercial Building, Le Thai To Street, Vo Cuong Ward, Bac Ninh Province, Vietnam"
   }
 };
 
