@@ -96,6 +96,21 @@
   .shop-toast-error{background:#c53030}
   .shop-toast-success{background:#0f9d63}
 
+  /* Qty modal */
+  .qty-modal{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+  .qty-modal[hidden]{display:none}
+  .qty-modal-backdrop{position:absolute;inset:0;background:rgba(15,26,46,.45);backdrop-filter:blur(2px)}
+  .qty-modal-box{position:relative;background:#fff;border-radius:16px;padding:28px 24px;width:min(360px,100%);box-shadow:0 20px 60px rgba(15,26,46,.2)}
+  .qty-modal-box h3{font-size:18px;color:var(--dark);font-weight:800;margin-bottom:8px}
+  .qty-modal-product{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .qty-modal-control{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px}
+  .qty-modal-control button{width:40px;height:40px;border:1px solid #dbe4f0;border-radius:10px;background:#fff;font-size:20px;font-weight:700;cursor:pointer;color:var(--dark)}
+  .qty-modal-control button:hover{border-color:var(--primary);color:var(--primary)}
+  .qty-modal-control input{width:72px;text-align:center;border:1px solid #dbe4f0;border-radius:10px;padding:10px;font-size:18px;font-weight:800}
+  .qty-modal-actions{display:flex;gap:10px;justify-content:flex-end}
+  .qty-modal-actions .btn-ghost{background:#fff;border:1.5px solid #dbe4f0;color:var(--muted)}
+  .qty-modal-actions .btn-ghost:hover{background:#f5f8fd}
+
   /* Software showcase */
   .showcase{background:var(--white)}
   .showcase .container{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
@@ -438,6 +453,23 @@
   </div>
 </footer>
 
+<div id="qtyModal" class="qty-modal" hidden>
+  <div class="qty-modal-backdrop" id="qtyModalBackdrop"></div>
+  <div class="qty-modal-box">
+    <h3 id="qtyModalTitle">Chọn số lượng</h3>
+    <p class="qty-modal-product" id="qtyModalProduct"></p>
+    <div class="qty-modal-control">
+      <button type="button" id="qtyModalMinus" aria-label="-">−</button>
+      <input type="number" id="qtyModalInput" value="1" min="1" max="99">
+      <button type="button" id="qtyModalPlus" aria-label="+">+</button>
+    </div>
+    <div class="qty-modal-actions">
+      <button type="button" class="btn btn-ghost btn-sm" id="qtyModalCancel">Huỷ</button>
+      <button type="button" class="btn btn-primary btn-sm" id="qtyModalConfirm">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const I18N = {
   vi: {
@@ -716,14 +748,69 @@ setLang(saved);
 </script>
 
 <script type="module">
-import { api, formatVnd, getToken, getStoredUser, refreshCartBadge, showToast } from './js/api.js';
+import { api, formatVnd, productName, getLang, getToken, getStoredUser, refreshCartBadge, showToast } from './js/api.js';
 
 const productPrices = {};
+const productMap = {};
+
+const QTY_I18N = {
+  vi: { title: 'Chọn số lượng', confirm: 'Xác nhận', cancel: 'Huỷ' },
+  zh: { title: '选择数量', confirm: '确认', cancel: '取消' },
+  en: { title: 'Select Quantity', confirm: 'Confirm', cancel: 'Cancel' },
+};
+
+function openQtyPicker(label) {
+  const lang = getLang();
+  const t = QTY_I18N[lang] || QTY_I18N.vi;
+  const modal = document.getElementById('qtyModal');
+  const input = document.getElementById('qtyModalInput');
+
+  document.getElementById('qtyModalTitle').textContent = t.title;
+  document.getElementById('qtyModalProduct').textContent = label;
+  document.getElementById('qtyModalConfirm').textContent = t.confirm;
+  document.getElementById('qtyModalCancel').textContent = t.cancel;
+  input.value = 1;
+  modal.hidden = false;
+
+  return new Promise((resolve, reject) => {
+    const close = (result) => {
+      modal.hidden = true;
+      document.removeEventListener('keydown', onKey);
+      resolve(result);
+    };
+    const cancel = () => {
+      modal.hidden = true;
+      document.removeEventListener('keydown', onKey);
+      reject(new Error('cancel'));
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') cancel();
+      if (e.key === 'Enter') document.getElementById('qtyModalConfirm').click();
+    };
+    document.addEventListener('keydown', onKey);
+
+    document.getElementById('qtyModalMinus').onclick = () => {
+      input.value = Math.max(1, (parseInt(input.value, 10) || 1) - 1);
+    };
+    document.getElementById('qtyModalPlus').onclick = () => {
+      input.value = Math.min(99, (parseInt(input.value, 10) || 1) + 1);
+    };
+    input.onchange = () => {
+      input.value = Math.max(1, Math.min(99, parseInt(input.value, 10) || 1));
+    };
+    document.getElementById('qtyModalConfirm').onclick = () => {
+      close(Math.max(1, Math.min(99, parseInt(input.value, 10) || 1)));
+    };
+    document.getElementById('qtyModalCancel').onclick = cancel;
+    document.getElementById('qtyModalBackdrop').onclick = cancel;
+  });
+}
 
 async function loadProducts() {
   try {
     const { products } = await api.products();
     products.forEach(p => {
+      productMap[p.id] = p;
       productPrices[p.id] = p.price;
       const el = document.querySelector(`[data-price="${p.id}"]`);
       if (el) el.textContent = formatVnd(p.price);
@@ -745,15 +832,15 @@ function updateUserBtn() {
   }
 }
 
-async function addToCart(productId, redirect = false) {
+async function addToCart(productId, redirect = false, quantity = 1) {
   if (!getToken()) {
     location.href = 'account.html?return=' + encodeURIComponent(location.pathname + location.hash);
     return;
   }
   try {
-    await api.addToCart(productId, 1);
+    await api.addToCart(productId, quantity);
     await refreshCartBadge();
-    const lang = localStorage.getItem('site_lang') || 'vi';
+    const lang = getLang();
     showToast(lang === 'zh' ? '已加入购物车' : lang === 'en' ? 'Added to cart' : 'Đã thêm vào giỏ', 'success');
     if (redirect) location.href = 'checkout.html';
   } catch (e) {
@@ -763,7 +850,18 @@ async function addToCart(productId, redirect = false) {
 
 document.querySelectorAll('.card[data-product-id]').forEach(card => {
   const id = card.dataset.productId;
-  card.querySelector('.btn-add-cart')?.addEventListener('click', () => addToCart(id, false));
+  card.querySelector('.btn-add-cart')?.addEventListener('click', async () => {
+    if (!getToken()) {
+      location.href = 'account.html?return=' + encodeURIComponent(location.pathname + location.hash);
+      return;
+    }
+    const p = productMap[id];
+    const label = p ? productName(p, getLang()) : (card.querySelector('h3')?.textContent || '');
+    try {
+      const qty = await openQtyPicker(label);
+      await addToCart(id, false, qty);
+    } catch { /* cancelled */ }
+  });
   card.querySelector('.btn-buy-now')?.addEventListener('click', () => addToCart(id, true));
 });
 
