@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="api-base" content="https://api.eraworks.vn">
 <title>Tài khoản — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
 <link rel="stylesheet" href="css/shop.css">
 <style>
   :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
@@ -12,10 +13,6 @@
   body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
   a{text-decoration:none;color:inherit}
   .container{max-width:900px;margin:0 auto;padding:0 20px}
-  header{background:#fff;border-bottom:1px solid #e6ecf5;padding:16px 0}
-  .nav{display:flex;align-items:center;justify-content:space-between}
-  .logo{font-weight:800;color:var(--dark)}
-  .logo span{color:var(--primary)}
   .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
   .btn:hover{background:var(--primary-dark)}
   .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
@@ -23,12 +20,7 @@
 </style>
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <a href="index.html" class="logo"><span>ERAWORKS</span> Shop</a>
-    <a href="cart.html" class="shop-icon-btn">🛒<span class="cart-badge"></span></a>
-  </div>
-</header>
+<header id="siteHeader"></header>
 
 <main class="shop-page">
   <div class="container">
@@ -47,6 +39,9 @@
 
 <script type="module">
 import { api, formatVnd, getLang, getToken, getStoredUser, setAuth, clearAuth, refreshCartBadge, showToast, qs } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+initSiteHeader();
 
 const lang = getLang();
 const T = {

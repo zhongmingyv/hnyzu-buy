@@ -140,3 +140,12 @@ npm run dev
 - `js/api.js`：`updateUserBtn(lang)` 支持传入当前语言
 - `js/site-header.js`：切换语言时传入 `lang` 参数
 
+## 2026-08-12 — 顶部 Logo 按语言切换
+
+### hnyzu-buy
+
+- 新增 `img/logo-zh.png`（新纪元科技）、`img/logo-en.png`、`img/logo-vi.png`（英/越暂用 biglogo，可替换）
+- 顶部导航文字 Logo 改为图片，切换语言时自动换图
+- `js/api.js` 新增 `updateHeaderLogo(lang)`
+- 首页、购物车、结算、账户页统一使用语言 Logo
+

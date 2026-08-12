@@ -1,4 +1,4 @@
-import { getLang, refreshCartBadge, updateUserBtn } from './api.js';
+import { getLang, refreshCartBadge, updateUserBtn, updateHeaderLogo } from './api.js';
 
 const HEADER_I18N = {
   vi: {
@@ -42,7 +42,9 @@ function setHeaderLang(lang) {
     b.classList.toggle('active', b.dataset.lang === lang);
   });
   try { localStorage.setItem('site_lang', lang); } catch {}
+  updateHeaderLogo(lang);
   updateUserBtn(lang);
+  window.dispatchEvent(new CustomEvent('site:langchange', { detail: { lang } }));
 }
 
 export function initSiteHeader() {
@@ -52,8 +54,7 @@ export function initSiteHeader() {
   header.innerHTML = `
     <div class="container nav">
       <a href="index.html" class="logo">
-        <img src="img/logo.png" alt="ERAWORKS" class="mark-img">
-        <span data-i18n-html="companyShort"><span style="color:#061E36">TÂN KỶ NGUYÊN</span> <span style="color:#04A8A1">TECH</span></span>
+        <img id="headerLogo" src="img/logo-vi.png" alt="ERAWORKS" class="logo-wordmark">
       </a>
       <nav class="nav-links" id="navLinks">
         <a href="index.html#products" data-i18n="navProducts">Sản phẩm</a>

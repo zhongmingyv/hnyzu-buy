@@ -41,7 +41,7 @@ import { initSiteHeader } from './js/site-header.js';
 
 initSiteHeader();
 
-const lang = getLang();
+let lang = getLang();
 const BANK_ACCOUNT = {
   name: 'Công ty TNHH Công nghệ Tân Kỷ Nguyên',
   number: '1069683613',
@@ -122,10 +122,10 @@ function renderAddressOptions() {
 function renderBankInfo(extraHint) {
   return `
     <div class="bank-info">
-      <h4>${t.bankInfoTitle}</h4>
-      <p>${t.acctName}: <b>${BANK_ACCOUNT.name}</b></p>
-      <p>${t.acctNo}: <b>${BANK_ACCOUNT.number}</b></p>
-      <p>${t.acctBank}: <b>${BANK_ACCOUNT.bank}</b></p>
+      <h4>${t().bankInfoTitle}</h4>
+      <p>${t().acctName}: <b>${BANK_ACCOUNT.name}</b></p>
+      <p>${t().acctNo}: <b>${BANK_ACCOUNT.number}</b></p>
+      <p>${t().acctBank}: <b>${BANK_ACCOUNT.bank}</b></p>
       ${extraHint ? `<p style="margin-top:10px;color:var(--muted);font-size:13px">${extraHint}</p>` : ''}
     </div>`;
 }

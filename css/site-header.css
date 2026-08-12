@@ -31,12 +31,17 @@
 #siteHeader .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  color: var(--dark);
-  font-size: 17px;
-  letter-spacing: .2px;
   text-decoration: none;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+#siteHeader .logo-wordmark {
+  height: 40px;
+  width: auto;
+  max-width: min(260px, 50vw);
+  object-fit: contain;
+  display: block;
 }
 
 #siteHeader .logo .mark-img {
@@ -122,11 +127,12 @@
     display: flex;
   }
 
-  #siteHeader .menu-btn {
-    display: block;
+  #siteHeader .logo-wordmark {
+    height: 32px;
+    max-width: min(200px, 45vw);
   }
 
-  #siteHeader .logo {
-    font-size: 13px;
+  #siteHeader .menu-btn {
+    display: block;
   }
 }

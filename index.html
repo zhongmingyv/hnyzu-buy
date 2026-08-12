@@ -28,7 +28,8 @@
   /* ===== Header ===== */
   header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #e6ecf5}
   .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--dark);font-size:17px;letter-spacing:.2px}
+  .logo{display:flex;align-items:center;flex-shrink:1;min-width:0}
+  .logo-wordmark{height:40px;width:auto;max-width:min(260px,50vw);object-fit:contain;display:block}
   .logo .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#4d9aff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:900;flex-shrink:0}
   .logo .mark-img{width:38px;height:38px;border-radius:10px;object-fit:cover;flex-shrink:0;display:block}
   .nav-links{display:flex;align-items:center;gap:26px;font-size:15px;font-weight:600;color:var(--muted)}
@@ -180,6 +181,7 @@
     .contact-box{padding:36px 24px}
     .sec-head h2{font-size:26px}
     .logo{font-size:13px}
+    .logo-wordmark{height:32px;max-width:min(200px,45vw)}
   }
 </style>
 </head>
@@ -188,8 +190,7 @@
 <header>
   <div class="container nav">
     <a href="#" class="logo">
-      <img src="img/logo.png" alt="ERAWORKS" class="mark-img">
-      <span data-i18n-html="companyShort"><span style="color:#061E36">TÂN KỶ NGUYÊN</span> <span style="color:#04A8A1">TECH</span></span>
+      <img id="headerLogo" src="img/logo-vi.png" alt="ERAWORKS" class="logo-wordmark">
     </a>
     <nav class="nav-links" id="navLinks">
       <a href="#products" data-i18n="navProducts">Sản phẩm</a>
@@ -715,6 +716,12 @@ const I18N = {
 };
 
 const LOGIN_BTN_LABELS = { vi: 'Đăng nhập', zh: '登录', en: 'Login' };
+const HEADER_LOGOS = { vi: 'img/logo-vi.png', zh: 'img/logo-zh.png', en: 'img/logo-en.png' };
+
+function updateHeaderLogo(lang) {
+  const img = document.getElementById('headerLogo');
+  if (img) img.src = HEADER_LOGOS[lang] || HEADER_LOGOS.vi;
+}
 
 function updateLoginBtnLabel(lang) {
   const btn = document.getElementById('userBtn');
@@ -748,8 +755,10 @@ function setLang(lang){
     b.classList.toggle("active", b.dataset.lang === lang);
   });
   try{ localStorage.setItem("site_lang", lang); }catch(e){}
+  updateHeaderLogo(lang);
   updateLoginBtnLabel(lang);
   if (typeof window.updateUserBtn === "function") window.updateUserBtn(lang);
+  if (typeof window.updateHeaderLogo === "function") window.updateHeaderLogo(lang);
 }
 
 document.querySelectorAll(".lang-switch button").forEach(b=>{
@@ -769,9 +778,10 @@ setLang(saved);
 </script>
 
 <script type="module">
-import { api, formatVnd, productName, getLang, getToken, refreshCartBadge, showToast, updateUserBtn } from './js/api.js';
+import { api, formatVnd, productName, getLang, getToken, refreshCartBadge, showToast, updateUserBtn, updateHeaderLogo } from './js/api.js';
 
 window.updateUserBtn = updateUserBtn;
+window.updateHeaderLogo = updateHeaderLogo;
 
 const productPrices = {};
 const productMap = {};
@@ -906,6 +916,7 @@ document.querySelectorAll('.card[data-product-id]').forEach(card => {
 
 loadProducts();
 updateUserBtn();
+updateHeaderLogo();
 refreshCartBadge();
 </script>
 </body>

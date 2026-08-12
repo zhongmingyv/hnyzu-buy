@@ -34,14 +34,25 @@ import { initSiteHeader } from './js/site-header.js';
 initSiteHeader();
 
 const I18N = {
-  vi: { title:'Giỏ hàng', loading:'Đang tải...', empty:'Giỏ hàng trống.', shop:'Mua sắm', continueShop:'Tiếp tục mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', qty:'SL' },
-  zh: { title:'购物车', loading:'加载中...', empty:'购物车为空。', shop:'去购物', continueShop:'继续购买', total:'合计：', checkout:'去结算', remove:'删除', qty:'数量' },
-  en: { title:'Shopping Cart', loading:'Loading...', empty:'Your cart is empty.', shop:'Continue shopping', continueShop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', qty:'Qty' }
+  vi: { title:'Giỏ hàng', pageTitle:'Giỏ hàng — ERAWORKS', loading:'Đang tải...', empty:'Giỏ hàng trống.', shop:'Mua sắm', continueShop:'Tiếp tục mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', qty:'SL', removed:'Đã xóa' },
+  zh: { title:'购物车', pageTitle:'购物车 — 新纪元科技', loading:'加载中...', empty:'购物车为空。', shop:'去购物', continueShop:'继续购买', total:'合计：', checkout:'去结算', remove:'删除', qty:'数量', removed:'已删除' },
+  en: { title:'Shopping Cart', pageTitle:'Shopping Cart — ERAWORKS', loading:'Loading...', empty:'Your cart is empty.', shop:'Continue shopping', continueShop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', qty:'Qty', removed:'Removed' }
 };
 
-const lang = getLang();
-const t = I18N[lang] || I18N.vi;
-document.querySelector('[data-i18n="title"]').textContent = t.title;
+let lang = getLang();
+const t = () => I18N[lang] || I18N.vi;
+
+function applyPageLang() {
+  document.querySelector('[data-i18n="title"]').textContent = t().title;
+  document.title = t().pageTitle;
+}
+
+applyPageLang();
+window.addEventListener('site:langchange', (e) => {
+  lang = e.detail.lang;
+  applyPageLang();
+  loadCart();
+});
 
 if (!requireAuth()) throw new Error('auth');
 
@@ -51,7 +62,7 @@ async function loadCart() {
     const data = await api.cart();
     refreshCartBadge();
     if (!data.items?.length) {
-      el.innerHTML = `<div class="shop-empty">${t.empty} <a href="index.html#products">${t.shop}</a></div>`;
+      el.innerHTML = `<div class="shop-empty">${t().empty} <a href="index.html#products">${t().shop}</a></div>`;
       return;
     }
     el.innerHTML = `
@@ -70,16 +81,16 @@ async function loadCart() {
             </div>
             <div class="cart-item-right">
               <div class="price">${formatVnd(item.price * item.quantity)}</div>
-              <button class="link-danger btn-remove">${t.remove}</button>
+              <button class="link-danger btn-remove">${t().remove}</button>
             </div>
           </div>
         `).join('')}
       </div>
       <div class="cart-summary">
-        <div class="total">${t.total} <span>${formatVnd(data.total)}</span></div>
+        <div class="total">${t().total} <span>${formatVnd(data.total)}</span></div>
         <div class="cart-summary-btns">
-          <a href="index.html#products" class="btn btn-outline">${t.continueShop}</a>
-          <a href="checkout.html" class="btn btn-primary">${t.checkout}</a>
+          <a href="index.html#products" class="btn btn-outline">${t().continueShop}</a>
+          <a href="checkout.html" class="btn btn-primary">${t().checkout}</a>
         </div>
       </div>`;
 
@@ -100,7 +111,7 @@ async function loadCart() {
       row.querySelector('.btn-remove').onclick = async () => {
         try {
           await api.removeCartItem(id);
-          showToast(lang === 'zh' ? '已删除' : lang === 'en' ? 'Removed' : 'Đã xóa', 'success');
+          showToast(t().removed, 'success');
           await loadCart();
         } catch (e) { showToast(e.message, 'error'); }
       };

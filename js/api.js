@@ -91,6 +91,21 @@ export function getLang() {
 
 const LOGIN_LABELS = { vi: 'Đăng nhập', zh: '登录', en: 'Login' };
 
+export const HEADER_LOGOS = {
+  vi: 'img/logo-vi.png',
+  zh: 'img/logo-zh.png',
+  en: 'img/logo-en.png',
+};
+
+/** 按语言切换顶部 Logo 图 */
+export function updateHeaderLogo(lang) {
+  const l = lang || getLang();
+  const src = HEADER_LOGOS[l] || HEADER_LOGOS.vi;
+  document.querySelectorAll('#headerLogo, .logo-wordmark').forEach((img) => {
+    if (img.tagName === 'IMG') img.src = src;
+  });
+}
+
 /** 更新顶部用户按钮：已登录显示用户名，未登录显示登录文案 */
 export function updateUserBtn(lang) {
   const btn = document.getElementById('userBtn');
