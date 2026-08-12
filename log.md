@@ -185,3 +185,9 @@ npm run dev
 - `account.html`：登录/注册表单支持密码；个人资料可修改密码
 - `js/api.js`：新增 `login`、`register` API
 
+## 2026-08-12 — 账户页切换语言即时翻译
+
+### hnyzu-buy
+
+- `account.html`：监听语言切换，登录/注册表单与订单/地址页即时重渲染
+

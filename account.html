@@ -45,8 +45,6 @@
 import { api, formatVnd, getLang, getToken, getStoredUser, setAuth, clearAuth, refreshCartBadge, showToast, qs, updateUserBtn } from './js/api.js';
 import { initSiteHeader } from './js/site-header.js';
 
-initSiteHeader();
-
 let lang = getLang();
 const T = {
   vi: {
@@ -87,17 +85,67 @@ const T = {
   }
 };
 const t = () => T[lang] || T.vi;
-document.getElementById('pageTitle').textContent = t().title;
-document.getElementById('tabAddr').textContent = t().addresses;
-document.getElementById('tabOrders').textContent = t().orders;
-document.getElementById('tabProfile').textContent = t().profile;
 
-refreshCartBadge();
-
+let authViewMode = 'login';
 let currentUser = getStoredUser();
 let devCode = '';
 
-function renderAuth() {
+function applyPageLang() {
+  document.getElementById('pageTitle').textContent = t().title;
+  document.getElementById('tabAddr').textContent = t().addresses;
+  document.getElementById('tabOrders').textContent = t().orders;
+  document.getElementById('tabProfile').textContent = t().profile;
+  document.title = `${t().title} — ERAWORKS`;
+}
+
+function captureAuthState() {
+  const otpPanel = document.getElementById('authOtpPanel');
+  const registerPanel = document.getElementById('authRegisterPanel');
+  if (otpPanel && otpPanel.style.display !== 'none') {
+    return {
+      mode: 'otp',
+      email: document.getElementById('authEmail')?.value || '',
+      name: document.getElementById('authName')?.value || '',
+      password: document.getElementById('authPassword')?.value || '',
+      code: document.getElementById('authCode')?.value || '',
+      otpStep: document.getElementById('step2')?.classList.contains('active') ? 2 : 1,
+    };
+  }
+  if (registerPanel && registerPanel.style.display !== 'none') {
+    return {
+      mode: 'register',
+      email: document.getElementById('regEmail')?.value || '',
+      password: document.getElementById('regPassword')?.value || '',
+      password2: document.getElementById('regPassword2')?.value || '',
+      name: document.getElementById('regName')?.value || '',
+    };
+  }
+  return {
+    mode: 'login',
+    email: document.getElementById('loginEmail')?.value || '',
+    password: document.getElementById('loginPassword')?.value || '',
+  };
+}
+
+function onLangChange(newLang) {
+  lang = newLang;
+  applyPageLang();
+  if (document.getElementById('accountSection').style.display !== 'none') {
+    const activeTab = document.querySelector('.shop-tab.active')?.dataset.tab || 'addresses';
+    loadTab(activeTab);
+    return;
+  }
+  if (document.getElementById('authSection').style.display !== 'none') {
+    renderAuth(captureAuthState());
+  }
+}
+
+initSiteHeader({ onLangChange });
+applyPageLang();
+
+refreshCartBadge();
+function renderAuth(restore = null) {
+  authViewMode = restore?.mode || 'login';
   document.getElementById('authSection').style.display = 'block';
   document.getElementById('accountSection').style.display = 'none';
   document.getElementById('authSection').innerHTML = `
@@ -149,6 +197,7 @@ function renderAuth() {
   const modeTabs = document.querySelectorAll('[data-auth-mode]');
 
   function setAuthMode(mode) {
+    authViewMode = mode;
     modeTabs.forEach(b => b.classList.toggle('active', b.dataset.authMode === mode));
     loginPanel.style.display = mode === 'login' ? 'block' : 'none';
     registerPanel.style.display = mode === 'register' ? 'block' : 'none';
@@ -161,6 +210,7 @@ function renderAuth() {
 
   document.getElementById('showOtpLink').onclick = (e) => {
     e.preventDefault();
+    authViewMode = 'otp';
     loginPanel.style.display = 'none';
     registerPanel.style.display = 'none';
     otpPanel.style.display = 'block';
@@ -171,6 +221,40 @@ function renderAuth() {
     e.preventDefault();
     setAuthMode('login');
   };
+
+  if (restore) {
+    if (restore.mode === 'register') {
+      setAuthMode('register');
+      document.getElementById('regEmail').value = restore.email || '';
+      document.getElementById('regPassword').value = restore.password || '';
+      document.getElementById('regPassword2').value = restore.password2 || '';
+      document.getElementById('regName').value = restore.name || '';
+    } else if (restore.mode === 'otp') {
+      authViewMode = 'otp';
+      loginPanel.style.display = 'none';
+      registerPanel.style.display = 'none';
+      otpPanel.style.display = 'block';
+      modeTabs.forEach(b => b.classList.remove('active'));
+      document.getElementById('authEmail').value = restore.email || '';
+      document.getElementById('authName').value = restore.name || '';
+      document.getElementById('authPassword').value = restore.password || '';
+      if (restore.otpStep === 2) {
+        document.getElementById('emailHint').textContent = restore.email || '';
+        document.getElementById('authCode').value = restore.code || '';
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step2').classList.add('active');
+        if (devCode) {
+          const hint = document.getElementById('devCodeHint');
+          hint.style.display = 'block';
+          hint.textContent = `${t().devHint} ${devCode}`;
+        }
+      }
+    } else {
+      setAuthMode('login');
+      document.getElementById('loginEmail').value = restore.email || '';
+      document.getElementById('loginPassword').value = restore.password || '';
+    }
+  }
 
   async function afterAuth(res) {
     setAuth(res.token, res.user);
@@ -368,7 +452,7 @@ async function loadOrders(el) {
           <b>#${o.id.slice(0, 8).toUpperCase()}</b>
           <span style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleString()}</span>
         </div>
-        <p style="font-size:14px;margin-bottom:8px">${t().status}: <b>${o.status === 'pending' ? t.pending : o.status}</b> · ${t().payment}: ${t().bank}</p>
+        <p style="font-size:14px;margin-bottom:8px">${t().status}: <b>${o.status === 'pending' ? t().pending : o.status}</b> · ${t().payment}: ${t().bank}</p>
         ${(o.items || []).map(i => `<p style="font-size:14px;color:var(--muted)">${i.product_name} × ${i.quantity} — ${formatVnd(i.price * i.quantity)}</p>`).join('')}
         <p style="margin-top:12px;font-weight:800;color:var(--primary)">${formatVnd(o.total_amount)}</p>
       </div>
