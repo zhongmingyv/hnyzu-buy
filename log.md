@@ -13,7 +13,7 @@
   - **收货地址**：`GET/POST/PATCH/DELETE /api/addresses`、`POST /api/addresses/:id/default`
   - **订单**：`POST /api/orders/checkout`、`GET /api/orders`
 - 开发模式（`DEV_MODE=true`）下验证码会在 API 响应中返回 `devCode`，便于本地测试
-- 支付方式支持：银行转账（`bank_transfer`）、货到付款（`cod`）
+- 支付方式支持：银行转账（`bank_transfer`）
 - 预置 4 个商品数据（与首页产品对应）
 
 ### hnyzu-buy（前端电商功能）
@@ -85,4 +85,44 @@ npm run dev
 
 - `index.html`：点击「加入购物车」时弹出数量选择框（± 调整、1–99），确认后再加入购物车
 - 支持越/中/英三语弹窗文案；Esc 关闭，Enter 确认
+
+## 2026-08-12 — 购物车/结算页「继续购买」按钮
+
+### hnyzu-buy
+
+- `cart.html`：结算区域增加「继续购买」按钮，返回首页产品区
+- `checkout.html`：提交订单按钮下方增加「继续购买」按钮
+
+## 2026-08-12 — 统一购物/结算页顶部导航
+
+### hnyzu-buy
+
+- 新增 `css/site-header.css`、`js/site-header.js` 共用顶部导航（与 index.html 一致：Logo、导航链接、登录、购物车、语言切换、移动端菜单）
+- `cart.html`、`checkout.html` 改用共用 header
+
+## 2026-08-12 — 修复切换语言后用户名被覆盖
+
+### hnyzu-buy
+
+- `js/api.js`：统一 `updateUserBtn()`，已登录时始终显示用户名
+- `index.html`：`setLang` 跳过 `#userBtn`，切换语言后调用 `updateUserBtn` 恢复
+- `js/site-header.js`：移除 `#userBtn` 的 `data-i18n`，避免被 i18n 覆盖
+
+## 2026-08-12 — 移除货到付款（COD）
+
+### hnyzu-buy
+
+- `checkout.html`：结算页仅保留银行转账方式
+- `account.html`：订单列表支付方式显示为银行转账
+
+### hnyzu-buy-server
+
+- `src/routes/orders.ts`：仅接受 `bank_transfer` 支付方式
+
+## 2026-08-12 — 结算页收款账户信息
+
+### hnyzu-buy
+
+- `checkout.html`：支付方式下方展示 Vietcombank 收款账户（公司名、账号 1069683613）
+- 下单成功页同步显示账户信息及订单号转账提示
 

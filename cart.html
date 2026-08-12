@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="api-base" content="https://api.eraworks.vn">
 <title>Giỏ hàng — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
 <link rel="stylesheet" href="css/shop.css">
 <style>
   :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--white:#fff;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
@@ -12,22 +13,10 @@
   body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
   a{text-decoration:none;color:inherit}
   .container{max-width:900px;margin:0 auto;padding:0 20px}
-  header{background:#fff;border-bottom:1px solid #e6ecf5;padding:16px 0}
-  .nav{display:flex;align-items:center;justify-content:space-between}
-  .logo{font-weight:800;color:var(--dark);font-size:17px}
-  .logo span{color:var(--primary)}
 </style>
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <a href="index.html" class="logo"><span>ERAWORKS</span> Shop</a>
-    <div class="shop-nav-actions">
-      <a href="account.html" class="user-menu-btn" id="userBtn">Đăng nhập</a>
-      <a href="cart.html" class="shop-icon-btn" title="Giỏ hàng">🛒<span class="cart-badge"></span></a>
-    </div>
-  </div>
-</header>
+<header id="siteHeader"></header>
 
 <main class="shop-page">
   <div class="container">
@@ -39,20 +28,20 @@
 </main>
 
 <script type="module">
-import { api, formatVnd, productName, getLang, getStoredUser, getToken, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+import { api, formatVnd, productName, getLang, getToken, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+initSiteHeader();
 
 const I18N = {
-  vi: { title:'Giỏ hàng', loading:'Đang tải...', empty:'Giỏ hàng trống.', shop:'Mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', qty:'SL' },
-  zh: { title:'购物车', loading:'加载中...', empty:'购物车为空。', shop:'去购物', total:'合计：', checkout:'去结算', remove:'删除', qty:'数量' },
-  en: { title:'Shopping Cart', loading:'Loading...', empty:'Your cart is empty.', shop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', qty:'Qty' }
+  vi: { title:'Giỏ hàng', loading:'Đang tải...', empty:'Giỏ hàng trống.', shop:'Mua sắm', continueShop:'Tiếp tục mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', qty:'SL' },
+  zh: { title:'购物车', loading:'加载中...', empty:'购物车为空。', shop:'去购物', continueShop:'继续购买', total:'合计：', checkout:'去结算', remove:'删除', qty:'数量' },
+  en: { title:'Shopping Cart', loading:'Loading...', empty:'Your cart is empty.', shop:'Continue shopping', continueShop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', qty:'Qty' }
 };
 
 const lang = getLang();
 const t = I18N[lang] || I18N.vi;
 document.querySelector('[data-i18n="title"]').textContent = t.title;
-
-const user = getStoredUser();
-document.getElementById('userBtn').textContent = user?.email || (lang === 'zh' ? '登录' : lang === 'en' ? 'Login' : 'Đăng nhập');
 
 if (!requireAuth()) throw new Error('auth');
 
@@ -88,7 +77,10 @@ async function loadCart() {
       </div>
       <div class="cart-summary">
         <div class="total">${t.total} <span>${formatVnd(data.total)}</span></div>
-        <a href="checkout.html" class="btn btn-primary">${t.checkout}</a>
+        <div class="cart-summary-btns">
+          <a href="index.html#products" class="btn btn-outline">${t.continueShop}</a>
+          <a href="checkout.html" class="btn btn-primary">${t.checkout}</a>
+        </div>
       </div>`;
 
     el.querySelectorAll('.cart-item').forEach(row => {
@@ -121,8 +113,11 @@ async function loadCart() {
 loadCart();
 </script>
 <style>
-.btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
+.btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer;text-align:center}
 .btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:#eef4ff}
+.cart-summary-btns{display:flex;gap:10px;flex-wrap:wrap}
 </style>
 </body>
 </html>

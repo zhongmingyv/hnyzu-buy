@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="api-base" content="https://api.eraworks.vn">
 <title>Thanh toán — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
 <link rel="stylesheet" href="css/shop.css">
 <style>
   :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
@@ -12,22 +13,20 @@
   body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
   a{text-decoration:none;color:inherit}
   .container{max-width:1000px;margin:0 auto;padding:0 20px}
-  header{background:#fff;border-bottom:1px solid #e6ecf5;padding:16px 0}
-  .nav{display:flex;align-items:center;justify-content:space-between}
-  .logo{font-weight:800;color:var(--dark)}
-  .logo span{color:var(--primary)}
   .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
   .btn:hover{background:var(--primary-dark)}
   .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+  .btn-outline:hover{background:#eef4ff}
+  .checkout-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+  .bank-info{margin-top:16px;padding:16px;border-radius:12px;background:#f5f9ff;border:1px solid #dbeafe;font-size:14px;line-height:1.7}
+  .bank-info h4{font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+  .bank-info p{margin-bottom:6px;color:var(--text)}
+  .bank-info p:last-child{margin-bottom:0}
+  .bank-info b{color:var(--dark);font-weight:700}
 </style>
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <a href="index.html" class="logo"><span>ERAWORKS</span> Shop</a>
-    <a href="cart.html" class="shop-icon-btn">🛒<span class="cart-badge"></span></a>
-  </div>
-</header>
+<header id="siteHeader"></header>
 
 <main class="shop-page">
   <div class="container">
@@ -38,30 +37,42 @@
 
 <script type="module">
 import { api, formatVnd, productName, getLang, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+initSiteHeader();
 
 const lang = getLang();
+const BANK_ACCOUNT = {
+  name: 'Công ty TNHH Công nghệ Tân Kỷ Nguyên',
+  number: '1069683613',
+  bank: 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
+};
+
 const T = {
   vi: {
     title:'Thanh toán', addr:'Địa chỉ giao hàng', noAddr:'Chưa có địa chỉ.', addAddr:'Thêm địa chỉ',
     payment:'Phương thức thanh toán', bank:'Chuyển khoản ngân hàng', bankDesc:'Chuyển khoản theo thông tin công ty, đơn hàng xử lý sau khi xác nhận.',
-    cod:'Thanh toán khi nhận hàng (COD)', codDesc:'Thanh toán tiền mặt khi giao hàng.',
-    note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng',
+    bankInfoTitle:'Thông tin tài khoản nhận', acctName:'Tên tài khoản', acctNo:'Số tài khoản', acctBank:'Ngân hàng',
+    transferHint:'Vui lòng chuyển khoản đúng số tiền và ghi mã đơn hàng {orderId} vào nội dung chuyển khoản.',
+    note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng', continueShop:'Tiếp tục mua sắm',
     success:'Đặt hàng thành công!', orderNo:'Mã đơn:', backHome:'Về trang chủ', viewOrders:'Xem đơn hàng',
     manageAddr:'Quản lý địa chỉ'
   },
   zh: {
     title:'结算', addr:'收货地址', noAddr:'暂无地址。', addAddr:'添加地址',
-    payment:'支付方式', bank:'银行转账', bankDesc:'按公司账户转账，确认后处理订单。',
-    cod:'货到付款 (COD)', codDesc:'送货时现金支付。',
-    note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单',
+    payment:'支付方式', bank:'银行转账', bankDesc:'请转账至以下公司账户，确认到账后处理订单。',
+    bankInfoTitle:'收款账户信息', acctName:'账户名称', acctNo:'账号', acctBank:'开户银行',
+    transferHint:'请转账准确金额，并在转账备注中填写订单号 {orderId}。',
+    note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单', continueShop:'继续购买',
     success:'下单成功！', orderNo:'订单号：', backHome:'返回首页', viewOrders:'查看订单',
     manageAddr:'管理地址'
   },
   en: {
     title:'Checkout', addr:'Shipping Address', noAddr:'No address yet.', addAddr:'Add address',
-    payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Transfer to company account; order processed after confirmation.',
-    cod:'Cash on Delivery (COD)', codDesc:'Pay in cash upon delivery.',
-    note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order',
+    payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Please transfer to the company account below; your order will be processed after confirmation.',
+    bankInfoTitle:'Payment Account Details', acctName:'Account name', acctNo:'Account number', acctBank:'Bank',
+    transferHint:'Please transfer the exact amount and include order ID {orderId} in the transfer note.',
+    note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order', continueShop:'Continue shopping',
     success:'Order placed successfully!', orderNo:'Order ID:', backHome:'Back to home', viewOrders:'View orders',
     manageAddr:'Manage addresses'
   }
@@ -108,6 +119,17 @@ function renderAddressOptions() {
   `).join('') + `<p style="margin-top:8px"><a href="account.html?tab=addresses">${t.manageAddr}</a></p>`;
 }
 
+function renderBankInfo(extraHint) {
+  return `
+    <div class="bank-info">
+      <h4>${t.bankInfoTitle}</h4>
+      <p>${t.acctName}: <b>${BANK_ACCOUNT.name}</b></p>
+      <p>${t.acctNo}: <b>${BANK_ACCOUNT.number}</b></p>
+      <p>${t.acctBank}: <b>${BANK_ACCOUNT.bank}</b></p>
+      ${extraHint ? `<p style="margin-top:10px;color:var(--muted);font-size:13px">${extraHint}</p>` : ''}
+    </div>`;
+}
+
 function render() {
   document.getElementById('checkoutView').innerHTML = `
     <div class="checkout-grid">
@@ -119,15 +141,11 @@ function render() {
         <div class="shop-card">
           <h3 style="margin-bottom:16px;color:var(--dark)">${t.payment}</h3>
           <div class="payment-options">
-            <label class="payment-option">
-              <input type="radio" name="payment" value="bank_transfer" checked>
+            <div class="payment-option" style="border-color:var(--primary);background:#f5f9ff;cursor:default">
               <div><b>${t.bank}</b><span>${t.bankDesc}</span></div>
-            </label>
-            <label class="payment-option">
-              <input type="radio" name="payment" value="cod">
-              <div><b>${t.cod}</b><span>${t.codDesc}</span></div>
-            </label>
+            </div>
           </div>
+          ${renderBankInfo()}
         </div>
         <div class="shop-card">
           <div class="form-group">
@@ -147,7 +165,10 @@ function render() {
         <div class="cart-summary" style="border-top:2px solid #eef2f9;margin-top:12px">
           <div class="total">${t.total}: <span>${formatVnd(cartData.total)}</span></div>
         </div>
-        <button class="btn" style="width:100%;margin-top:20px" id="placeOrderBtn">${t.place}</button>
+        <div class="checkout-actions">
+          <button class="btn" style="width:100%" id="placeOrderBtn">${t.place}</button>
+          <a href="index.html#products" class="btn btn-outline" style="width:100%;text-align:center">${t.continueShop}</a>
+        </div>
       </div>
     </div>`;
 
@@ -159,7 +180,7 @@ function render() {
 }
 
 async function placeOrder() {
-  const payment = document.querySelector('input[name="payment"]:checked')?.value;
+  const payment = 'bank_transfer';
   const note = document.getElementById('orderNote')?.value?.trim() || null;
   const addrId = document.querySelector('input[name="address"]:checked')?.value || selectedAddressId;
 
@@ -173,13 +194,15 @@ async function placeOrder() {
   try {
     const result = await api.checkout(addrId, payment, note);
     refreshCartBadge();
+    const orderId = result.order.id.slice(0, 8).toUpperCase();
     document.getElementById('checkoutView').innerHTML = `
       <div class="shop-card order-success">
         <div class="icon">✅</div>
         <h2>${t.success}</h2>
-        <p style="margin:12px 0;color:var(--muted)">${t.orderNo} <b>${result.order.id.slice(0, 8).toUpperCase()}</b></p>
-        <p style="margin-bottom:24px;font-size:20px;font-weight:800;color:var(--primary)">${formatVnd(result.order.total_amount)}</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <p style="margin:12px 0;color:var(--muted)">${t.orderNo} <b>${orderId}</b></p>
+        <p style="margin-bottom:16px;font-size:20px;font-weight:800;color:var(--primary)">${formatVnd(result.order.total_amount)}</p>
+        ${renderBankInfo(t.transferHint.replace('{orderId}', orderId))}
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
           <a href="index.html" class="btn btn-outline">${t.backHome}</a>
           <a href="account.html?tab=orders" class="btn">${t.viewOrders}</a>
         </div>

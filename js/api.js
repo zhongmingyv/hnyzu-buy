@@ -89,6 +89,21 @@ export function getLang() {
   try { return localStorage.getItem('site_lang') || 'vi'; } catch { return 'vi'; }
 }
 
+const LOGIN_LABELS = { vi: 'Đăng nhập', zh: '登录', en: 'Login' };
+
+/** 更新顶部用户按钮：已登录显示用户名，未登录显示登录文案 */
+export function updateUserBtn() {
+  const btn = document.getElementById('userBtn');
+  if (!btn) return;
+  const user = getStoredUser();
+  if (user?.email) {
+    btn.textContent = user.email.split('@')[0];
+  } else {
+    const lang = getLang();
+    btn.textContent = LOGIN_LABELS[lang] || LOGIN_LABELS.vi;
+  }
+}
+
 export function requireAuth(redirect = 'account.html') {
   if (!getToken()) {
     location.href = redirect + '?return=' + encodeURIComponent(location.pathname + location.search);
