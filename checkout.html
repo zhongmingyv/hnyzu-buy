@@ -1,219 +1,234 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="api-base" content="https://api.eraworks.vn">
-<title>Thanh toán — ERAWORKS</title>
-<link rel="stylesheet" href="css/site-header.css">
-<link rel="stylesheet" href="css/shop.css">
-<style>
-  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
-  a{text-decoration:none;color:inherit}
-  .container{max-width:1000px;margin:0 auto;padding:0 20px}
-  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
-  .btn:hover{background:var(--primary-dark)}
-  .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
-  .btn-outline:hover{background:#eef4ff}
-  .checkout-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
-  .bank-info{margin-top:16px;padding:16px;border-radius:12px;background:#f5f9ff;border:1px solid #dbeafe;font-size:14px;line-height:1.7}
-  .bank-info h4{font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
-  .bank-info p{margin-bottom:6px;color:var(--text)}
-  .bank-info p:last-child{margin-bottom:0}
-  .bank-info b{color:var(--dark);font-weight:700}
-</style>
-</head>
-<body>
-<header id="siteHeader"></header>
-
-<main class="shop-page">
-  <div class="container">
-    <h1 id="pageTitle">Thanh toán</h1>
-    <div id="checkoutView"></div>
-  </div>
-</main>
-
-<script type="module">
-import { api, formatVnd, productName, getLang, requireAuth, refreshCartBadge, showToast } from './js/api.js';
-import { initSiteHeader } from './js/site-header.js';
-
-initSiteHeader();
-
-let lang = getLang();
-const BANK_ACCOUNT = {
-  name: 'Công ty TNHH Công nghệ Tân Kỷ Nguyên',
-  number: '1069683613',
-  bank: 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
-};
-
-const T = {
-  vi: {
-    title:'Thanh toán', addr:'Địa chỉ giao hàng', noAddr:'Chưa có địa chỉ.', addAddr:'Thêm địa chỉ',
-    payment:'Phương thức thanh toán', bank:'Chuyển khoản ngân hàng', bankDesc:'Chuyển khoản theo thông tin công ty, đơn hàng xử lý sau khi xác nhận.',
-    bankInfoTitle:'Thông tin tài khoản nhận', acctName:'Tên tài khoản', acctNo:'Số tài khoản', acctBank:'Ngân hàng',
-    transferHint:'Vui lòng chuyển khoản đúng số tiền và ghi mã đơn hàng {orderId} vào nội dung chuyển khoản.',
-    note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng', continueShop:'Tiếp tục mua sắm',
-    success:'Đặt hàng thành công!', orderNo:'Mã đơn:', backHome:'Về trang chủ', viewOrders:'Xem đơn hàng',
-    manageAddr:'Quản lý địa chỉ'
-  },
-  zh: {
-    title:'结算', addr:'收货地址', noAddr:'暂无地址。', addAddr:'添加地址',
-    payment:'支付方式', bank:'银行转账', bankDesc:'请转账至以下公司账户，确认到账后处理订单。',
-    bankInfoTitle:'收款账户信息', acctName:'账户名称', acctNo:'账号', acctBank:'开户银行',
-    transferHint:'请转账准确金额，并在转账备注中填写订单号 {orderId}。',
-    note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单', continueShop:'继续购买',
-    success:'下单成功！', orderNo:'订单号：', backHome:'返回首页', viewOrders:'查看订单',
-    manageAddr:'管理地址'
-  },
-  en: {
-    title:'Checkout', addr:'Shipping Address', noAddr:'No address yet.', addAddr:'Add address',
-    payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Please transfer to the company account below; your order will be processed after confirmation.',
-    bankInfoTitle:'Payment Account Details', acctName:'Account name', acctNo:'Account number', acctBank:'Bank',
-    transferHint:'Please transfer the exact amount and include order ID {orderId} in the transfer note.',
-    note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order', continueShop:'Continue shopping',
-    success:'Order placed successfully!', orderNo:'Order ID:', backHome:'Back to home', viewOrders:'View orders',
-    manageAddr:'Manage addresses'
-  }
-};
-const t = T[lang] || T.vi;
-document.getElementById('pageTitle').textContent = t.title;
-
-if (!requireAuth()) throw new Error('auth');
-
-let cartData = null;
-let addresses = [];
-let selectedAddressId = null;
-
-async function init() {
-  refreshCartBadge();
-  try {
-    const [cart, addrRes] = await Promise.all([api.cart(), api.addresses()]);
-    cartData = cart;
-    addresses = addrRes.addresses || [];
-    selectedAddressId = addresses.find(a => a.is_default)?.id || addresses[0]?.id || null;
-    if (!cartData.items?.length) {
-      location.href = 'cart.html';
-      return;
-    }
-    render();
-  } catch (e) {
-    document.getElementById('checkoutView').innerHTML = `<div class="shop-card shop-empty">${e.message}</div>`;
-  }
-}
-
-function renderAddressOptions() {
-  if (!addresses.length) {
-    return `<p>${t.noAddr} <a href="account.html?tab=addresses">${t.addAddr}</a></p>`;
-  }
-  return addresses.map(a => `
-    <label class="payment-option" style="margin-bottom:8px">
-      <input type="radio" name="address" value="${a.id}" ${a.id === selectedAddressId ? 'checked' : ''}>
-      <div>
-        <b>${a.name} · ${a.phone}</b>
-        <span>${a.detail}, ${a.ward ? a.ward + ', ' : ''}${a.district}, ${a.province}</span>
-        ${a.is_default ? '<span style="color:var(--primary);font-size:12px;font-weight:700"> ✓ Default</span>' : ''}
-      </div>
-    </label>
-  `).join('') + `<p style="margin-top:8px"><a href="account.html?tab=addresses">${t.manageAddr}</a></p>`;
-}
-
-function renderBankInfo(extraHint) {
-  return `
-    <div class="bank-info">
-      <h4>${t().bankInfoTitle}</h4>
-      <p>${t().acctName}: <b>${BANK_ACCOUNT.name}</b></p>
-      <p>${t().acctNo}: <b>${BANK_ACCOUNT.number}</b></p>
-      <p>${t().acctBank}: <b>${BANK_ACCOUNT.bank}</b></p>
-      ${extraHint ? `<p style="margin-top:10px;color:var(--muted);font-size:13px">${extraHint}</p>` : ''}
-    </div>`;
-}
-
-function render() {
-  document.getElementById('checkoutView').innerHTML = `
-    <div class="checkout-grid">
-      <div>
-        <div class="shop-card">
-          <h3 style="margin-bottom:16px;color:var(--dark)">${t.addr}</h3>
-          <div id="addressList">${renderAddressOptions()}</div>
-        </div>
-        <div class="shop-card">
-          <h3 style="margin-bottom:16px;color:var(--dark)">${t.payment}</h3>
-          <div class="payment-options">
-            <div class="payment-option" style="border-color:var(--primary);background:#f5f9ff;cursor:default">
-              <div><b>${t.bank}</b><span>${t.bankDesc}</span></div>
-            </div>
-          </div>
-          ${renderBankInfo()}
-        </div>
-        <div class="shop-card">
-          <div class="form-group">
-            <label>${t.note}</label>
-            <textarea id="orderNote" rows="3" placeholder=""></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="shop-card">
-        <h3 style="margin-bottom:16px;color:var(--dark)">${t.orderSummary}</h3>
-        ${cartData.items.map(i => `
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px">
-            <span>${productName(i, lang)} × ${i.quantity}</span>
-            <span>${formatVnd(i.price * i.quantity)}</span>
-          </div>
-        `).join('')}
-        <div class="cart-summary" style="border-top:2px solid #eef2f9;margin-top:12px">
-          <div class="total">${t.total}: <span>${formatVnd(cartData.total)}</span></div>
-        </div>
-        <div class="checkout-actions">
-          <button class="btn" style="width:100%" id="placeOrderBtn">${t.place}</button>
-          <a href="index.html#products" class="btn btn-outline" style="width:100%;text-align:center">${t.continueShop}</a>
-        </div>
-      </div>
-    </div>`;
-
-  document.querySelectorAll('input[name="address"]').forEach(r => {
-    r.onchange = () => { selectedAddressId = r.value; };
-  });
-
-  document.getElementById('placeOrderBtn').onclick = placeOrder;
-}
-
-async function placeOrder() {
-  const payment = 'bank_transfer';
-  const note = document.getElementById('orderNote')?.value?.trim() || null;
-  const addrId = document.querySelector('input[name="address"]:checked')?.value || selectedAddressId;
-
-  if (!addrId) {
-    showToast(t.noAddr, 'error');
-    return;
-  }
-
-  const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = true;
-  try {
-    const result = await api.checkout(addrId, payment, note);
-    refreshCartBadge();
-    const orderId = result.order.id.slice(0, 8).toUpperCase();
-    document.getElementById('checkoutView').innerHTML = `
-      <div class="shop-card order-success">
-        <div class="icon">✅</div>
-        <h2>${t.success}</h2>
-        <p style="margin:12px 0;color:var(--muted)">${t.orderNo} <b>${orderId}</b></p>
-        <p style="margin-bottom:16px;font-size:20px;font-weight:800;color:var(--primary)">${formatVnd(result.order.total_amount)}</p>
-        ${renderBankInfo(t.transferHint.replace('{orderId}', orderId))}
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
-          <a href="index.html" class="btn btn-outline">${t.backHome}</a>
-          <a href="account.html?tab=orders" class="btn">${t.viewOrders}</a>
-        </div>
-      </div>`;
-  } catch (e) {
-    showToast(e.message, 'error');
-    btn.disabled = false;
-  }
-}
-
-init();
-</script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="api-base" content="https://api.eraworks.vn">
+<title>Thanh toán — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
+<link rel="stylesheet" href="css/shop.css">
+<style>
+  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:1000px;margin:0 auto;padding:0 20px}
+  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
+  .btn:hover{background:var(--primary-dark)}
+  .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+  .btn-outline:hover{background:#eef4ff}
+  .checkout-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+  .bank-info{margin-top:16px;padding:16px;border-radius:12px;background:#f5f9ff;border:1px solid #dbeafe;font-size:14px;line-height:1.7}
+  .bank-info h4{font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+  .bank-info p{margin-bottom:6px;color:var(--text)}
+  .bank-info p:last-child{margin-bottom:0}
+  .bank-info b{color:var(--dark);font-weight:700}
+</style>
+</head>
+<body>
+<header id="siteHeader"></header>
+
+<main class="shop-page">
+  <div class="container">
+    <h1 id="pageTitle">Thanh toán</h1>
+    <div id="checkoutView"></div>
+  </div>
+</main>
+
+<script type="module">
+import { api, formatVnd, productName, getLang, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+let lang = getLang();
+const BANK_ACCOUNT = {
+  name: 'Công ty TNHH Công nghệ Tân Kỷ Nguyên',
+  number: '1069683613',
+  bank: 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
+};
+
+const T = {
+  vi: {
+    title:'Thanh toán', pageTitle:'Thanh toán — ERAWORKS', addr:'Địa chỉ giao hàng', noAddr:'Chưa có địa chỉ.', addAddr:'Thêm địa chỉ',
+    payment:'Phương thức thanh toán', bank:'Chuyển khoản ngân hàng', bankDesc:'Chuyển khoản theo thông tin công ty, đơn hàng xử lý sau khi xác nhận.',
+    bankInfoTitle:'Thông tin tài khoản nhận', acctName:'Tên tài khoản', acctNo:'Số tài khoản', acctBank:'Ngân hàng',
+    transferHint:'Vui lòng chuyển khoản đúng số tiền và ghi mã đơn hàng {orderId} vào nội dung chuyển khoản.',
+    note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng', continueShop:'Tiếp tục mua sắm',
+    success:'Đặt hàng thành công!', orderNo:'Mã đơn:', backHome:'Về trang chủ', viewOrders:'Xem đơn hàng',
+    manageAddr:'Quản lý địa chỉ', defaultAddr:'Mặc định'
+  },
+  zh: {
+    title:'结算', pageTitle:'结算 — 新纪元科技', addr:'收货地址', noAddr:'暂无地址。', addAddr:'添加地址',
+    payment:'支付方式', bank:'银行转账', bankDesc:'请转账至以下公司账户，确认到账后处理订单。',
+    bankInfoTitle:'收款账户信息', acctName:'账户名称', acctNo:'账号', acctBank:'开户银行',
+    transferHint:'请转账准确金额，并在转账备注中填写订单号 {orderId}。',
+    note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单', continueShop:'继续购买',
+    success:'下单成功！', orderNo:'订单号：', backHome:'返回首页', viewOrders:'查看订单',
+    manageAddr:'管理地址', defaultAddr:'默认'
+  },
+  en: {
+    title:'Checkout', pageTitle:'Checkout — ERAWORKS', addr:'Shipping Address', noAddr:'No address yet.', addAddr:'Add address',
+    payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Please transfer to the company account below; your order will be processed after confirmation.',
+    bankInfoTitle:'Payment Account Details', acctName:'Account name', acctNo:'Account number', acctBank:'Bank',
+    transferHint:'Please transfer the exact amount and include order ID {orderId} in the transfer note.',
+    note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order', continueShop:'Continue shopping',
+    success:'Order placed successfully!', orderNo:'Order ID:', backHome:'Back to home', viewOrders:'View orders',
+    manageAddr:'Manage addresses', defaultAddr:'Default'
+  }
+};
+const t = () => T[lang] || T.vi;
+
+let cartData = null;
+let addresses = [];
+let selectedAddressId = null;
+let orderComplete = false;
+
+function applyPageLang() {
+  document.getElementById('pageTitle').textContent = t().title;
+  document.title = t().pageTitle;
+}
+
+function onLangChange(newLang) {
+  lang = newLang;
+  applyPageLang();
+  if (cartData && !orderComplete) render();
+}
+
+initSiteHeader({ onLangChange });
+
+if (!requireAuth()) throw new Error('auth');
+
+async function init() {
+  refreshCartBadge();
+  try {
+    const [cart, addrRes] = await Promise.all([api.cart(), api.addresses()]);
+    cartData = cart;
+    addresses = addrRes.addresses || [];
+    selectedAddressId = addresses.find(a => a.is_default)?.id || addresses[0]?.id || null;
+    if (!cartData.items?.length) {
+      location.href = 'cart.html';
+      return;
+    }
+    applyPageLang();
+    render();
+  } catch (e) {
+    document.getElementById('checkoutView').innerHTML = `<div class="shop-card shop-empty">${e.message}</div>`;
+  }
+}
+
+function renderAddressOptions() {
+  if (!addresses.length) {
+    return `<p>${t().noAddr} <a href="account.html?tab=addresses">${t().addAddr}</a></p>`;
+  }
+  return addresses.map(a => `
+    <label class="payment-option" style="margin-bottom:8px">
+      <input type="radio" name="address" value="${a.id}" ${a.id === selectedAddressId ? 'checked' : ''}>
+      <div>
+        <b>${a.name} · ${a.phone}</b>
+        <span>${a.detail}, ${a.ward ? a.ward + ', ' : ''}${a.district}, ${a.province}</span>
+        ${a.is_default ? `<span style="color:var(--primary);font-size:12px;font-weight:700"> ✓ ${t().defaultAddr}</span>` : ''}
+      </div>
+    </label>
+  `).join('') + `<p style="margin-top:8px"><a href="account.html?tab=addresses">${t().manageAddr}</a></p>`;
+}
+
+function renderBankInfo(extraHint) {
+  return `
+    <div class="bank-info">
+      <h4>${t().bankInfoTitle}</h4>
+      <p>${t().acctName}: <b>${BANK_ACCOUNT.name}</b></p>
+      <p>${t().acctNo}: <b>${BANK_ACCOUNT.number}</b></p>
+      <p>${t().acctBank}: <b>${BANK_ACCOUNT.bank}</b></p>
+      ${extraHint ? `<p style="margin-top:10px;color:var(--muted);font-size:13px">${extraHint}</p>` : ''}
+    </div>`;
+}
+
+function render() {
+  const noteValue = document.getElementById('orderNote')?.value || '';
+  document.getElementById('checkoutView').innerHTML = `
+    <div class="checkout-grid">
+      <div>
+        <div class="shop-card">
+          <h3 style="margin-bottom:16px;color:var(--dark)">${t().addr}</h3>
+          <div id="addressList">${renderAddressOptions()}</div>
+        </div>
+        <div class="shop-card">
+          <h3 style="margin-bottom:16px;color:var(--dark)">${t().payment}</h3>
+          <div class="payment-options">
+            <div class="payment-option" style="border-color:var(--primary);background:#f5f9ff;cursor:default">
+              <div><b>${t().bank}</b><span>${t().bankDesc}</span></div>
+            </div>
+          </div>
+          ${renderBankInfo()}
+        </div>
+        <div class="shop-card">
+          <div class="form-group">
+            <label>${t().note}</label>
+            <textarea id="orderNote" rows="3" placeholder="">${noteValue}</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="shop-card">
+        <h3 style="margin-bottom:16px;color:var(--dark)">${t().orderSummary}</h3>
+        ${cartData.items.map(i => `
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px">
+            <span>${productName(i, lang)} × ${i.quantity}</span>
+            <span>${formatVnd(i.price * i.quantity)}</span>
+          </div>
+        `).join('')}
+        <div class="cart-summary" style="border-top:2px solid #eef2f9;margin-top:12px">
+          <div class="total">${t().total}: <span>${formatVnd(cartData.total)}</span></div>
+        </div>
+        <div class="checkout-actions">
+          <button class="btn" style="width:100%" id="placeOrderBtn">${t().place}</button>
+          <a href="index.html#products" class="btn btn-outline" style="width:100%;text-align:center">${t().continueShop}</a>
+        </div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll('input[name="address"]').forEach(r => {
+    r.onchange = () => { selectedAddressId = r.value; };
+  });
+
+  document.getElementById('placeOrderBtn').onclick = placeOrder;
+}
+
+async function placeOrder() {
+  const payment = 'bank_transfer';
+  const note = document.getElementById('orderNote')?.value?.trim() || null;
+  const addrId = document.querySelector('input[name="address"]:checked')?.value || selectedAddressId;
+
+  if (!addrId) {
+    showToast(t().noAddr, 'error');
+    return;
+  }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  try {
+    const result = await api.checkout(addrId, payment, note);
+    orderComplete = true;
+    refreshCartBadge();
+    const orderId = result.order.id.slice(0, 8).toUpperCase();
+    document.getElementById('checkoutView').innerHTML = `
+      <div class="shop-card order-success">
+        <div class="icon">✅</div>
+        <h2>${t().success}</h2>
+        <p style="margin:12px 0;color:var(--muted)">${t().orderNo} <b>${orderId}</b></p>
+        <p style="margin-bottom:16px;font-size:20px;font-weight:800;color:var(--primary)">${formatVnd(result.order.total_amount)}</p>
+        ${renderBankInfo(t().transferHint.replace('{orderId}', orderId))}
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+          <a href="index.html" class="btn btn-outline">${t().backHome}</a>
+          <a href="account.html?tab=orders" class="btn">${t().viewOrders}</a>
+        </div>
+      </div>`;
+  } catch (e) {
+    showToast(e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
+

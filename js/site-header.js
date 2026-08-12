@@ -27,6 +27,8 @@ const HEADER_I18N = {
   },
 };
 
+let pageLangHandler = null;
+
 function setHeaderLang(lang) {
   const dict = HEADER_I18N[lang] || HEADER_I18N.vi;
   document.documentElement.lang = lang;
@@ -44,10 +46,12 @@ function setHeaderLang(lang) {
   try { localStorage.setItem('site_lang', lang); } catch {}
   updateHeaderLogo(lang);
   updateUserBtn(lang);
+  pageLangHandler?.(lang);
   window.dispatchEvent(new CustomEvent('site:langchange', { detail: { lang } }));
 }
 
-export function initSiteHeader() {
+export function initSiteHeader(options = {}) {
+  pageLangHandler = options.onLangChange || null;
   const header = document.getElementById('siteHeader');
   if (!header) return;
 

@@ -1,134 +1,142 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="api-base" content="https://api.eraworks.vn">
-<title>Giỏ hàng — ERAWORKS</title>
-<link rel="stylesheet" href="css/site-header.css">
-<link rel="stylesheet" href="css/shop.css">
-<style>
-  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--white:#fff;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
-  a{text-decoration:none;color:inherit}
-  .container{max-width:900px;margin:0 auto;padding:0 20px}
-</style>
-</head>
-<body>
-<header id="siteHeader"></header>
-
-<main class="shop-page">
-  <div class="container">
-    <h1 data-i18n="title">Giỏ hàng</h1>
-    <div id="cartContent" class="shop-card">
-      <div class="shop-empty" data-i18n="loading">Đang tải...</div>
-    </div>
-  </div>
-</main>
-
-<script type="module">
-import { api, formatVnd, productName, getLang, getToken, requireAuth, refreshCartBadge, showToast } from './js/api.js';
-import { initSiteHeader } from './js/site-header.js';
-
-initSiteHeader();
-
-const I18N = {
-  vi: { title:'Giỏ hàng', pageTitle:'Giỏ hàng — ERAWORKS', loading:'Đang tải...', empty:'Giỏ hàng trống.', shop:'Mua sắm', continueShop:'Tiếp tục mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', qty:'SL', removed:'Đã xóa' },
-  zh: { title:'购物车', pageTitle:'购物车 — 新纪元科技', loading:'加载中...', empty:'购物车为空。', shop:'去购物', continueShop:'继续购买', total:'合计：', checkout:'去结算', remove:'删除', qty:'数量', removed:'已删除' },
-  en: { title:'Shopping Cart', pageTitle:'Shopping Cart — ERAWORKS', loading:'Loading...', empty:'Your cart is empty.', shop:'Continue shopping', continueShop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', qty:'Qty', removed:'Removed' }
-};
-
-let lang = getLang();
-const t = () => I18N[lang] || I18N.vi;
-
-function applyPageLang() {
-  document.querySelector('[data-i18n="title"]').textContent = t().title;
-  document.title = t().pageTitle;
-}
-
-applyPageLang();
-window.addEventListener('site:langchange', (e) => {
-  lang = e.detail.lang;
-  applyPageLang();
-  loadCart();
-});
-
-if (!requireAuth()) throw new Error('auth');
-
-async function loadCart() {
-  const el = document.getElementById('cartContent');
-  try {
-    const data = await api.cart();
-    refreshCartBadge();
-    if (!data.items?.length) {
-      el.innerHTML = `<div class="shop-empty">${t().empty} <a href="index.html#products">${t().shop}</a></div>`;
-      return;
-    }
-    el.innerHTML = `
-      <div class="cart-list">
-        ${data.items.map(item => `
-          <div class="cart-item" data-id="${item.id}">
-            <img src="${item.image || 'img/logo.png'}" alt="">
-            <div>
-              <h4>${productName(item, lang)}</h4>
-              <div class="sub">${formatVnd(item.price)}</div>
-              <div class="qty-control">
-                <button type="button" class="qty-minus">−</button>
-                <input type="number" class="qty-input" value="${item.quantity}" min="1" max="99">
-                <button type="button" class="qty-plus">+</button>
-              </div>
-            </div>
-            <div class="cart-item-right">
-              <div class="price">${formatVnd(item.price * item.quantity)}</div>
-              <button class="link-danger btn-remove">${t().remove}</button>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      <div class="cart-summary">
-        <div class="total">${t().total} <span>${formatVnd(data.total)}</span></div>
-        <div class="cart-summary-btns">
-          <a href="index.html#products" class="btn btn-outline">${t().continueShop}</a>
-          <a href="checkout.html" class="btn btn-primary">${t().checkout}</a>
-        </div>
-      </div>`;
-
-    el.querySelectorAll('.cart-item').forEach(row => {
-      const id = row.dataset.id;
-      const input = row.querySelector('.qty-input');
-      const update = async (qty) => {
-        qty = Math.max(1, Math.min(99, qty));
-        input.value = qty;
-        try {
-          await api.updateCartItem(id, qty);
-          await loadCart();
-        } catch (e) { showToast(e.message, 'error'); }
-      };
-      row.querySelector('.qty-minus').onclick = () => update(parseInt(input.value, 10) - 1);
-      row.querySelector('.qty-plus').onclick = () => update(parseInt(input.value, 10) + 1);
-      input.onchange = () => update(parseInt(input.value, 10) || 1);
-      row.querySelector('.btn-remove').onclick = async () => {
-        try {
-          await api.removeCartItem(id);
-          showToast(t().removed, 'success');
-          await loadCart();
-        } catch (e) { showToast(e.message, 'error'); }
-      };
-    });
-  } catch (e) {
-    el.innerHTML = `<div class="shop-empty">${e.message}</div>`;
-  }
-}
-
-loadCart();
-</script>
-<style>
-.btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer;text-align:center}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
-.btn-outline:hover{background:#eef4ff}
-.cart-summary-btns{display:flex;gap:10px;flex-wrap:wrap}
-</style>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="api-base" content="https://api.eraworks.vn">
+<title>Giỏ hàng — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
+<link rel="stylesheet" href="css/shop.css">
+<style>
+  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--white:#fff;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:900px;margin:0 auto;padding:0 20px}
+</style>
+</head>
+<body>
+<header id="siteHeader"></header>
+
+<main class="shop-page">
+  <div class="container">
+    <h1 id="pageTitle">Giỏ hàng</h1>
+    <div id="cartContent" class="shop-card">
+      <div class="shop-empty">Đang tải...</div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { api, formatVnd, productName, getLang, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+const I18N = {
+  vi: { title:'Giỏ hàng', pageTitle:'Giỏ hàng — ERAWORKS', empty:'Giỏ hàng trống.', shop:'Mua sắm', continueShop:'Tiếp tục mua sắm', total:'Tổng cộng:', checkout:'Thanh toán', remove:'Xóa', removed:'Đã xóa' },
+  zh: { title:'购物车', pageTitle:'购物车 — 新纪元科技', empty:'购物车为空。', shop:'去购物', continueShop:'继续购买', total:'合计：', checkout:'去结算', remove:'删除', removed:'已删除' },
+  en: { title:'Shopping Cart', pageTitle:'Shopping Cart — ERAWORKS', empty:'Your cart is empty.', shop:'Continue shopping', continueShop:'Continue shopping', total:'Total:', checkout:'Checkout', remove:'Remove', removed:'Removed' }
+};
+
+let lang = getLang();
+let cartCache = null;
+const t = () => I18N[lang] || I18N.vi;
+
+function applyPageLang() {
+  document.getElementById('pageTitle').textContent = t().title;
+  document.title = t().pageTitle;
+}
+
+function onLangChange(newLang) {
+  lang = newLang;
+  applyPageLang();
+  if (cartCache) renderCart(cartCache);
+}
+
+initSiteHeader({ onLangChange });
+
+if (!requireAuth()) throw new Error('auth');
+
+function renderCart(data) {
+  const el = document.getElementById('cartContent');
+  if (!data.items?.length) {
+    el.innerHTML = `<div class="shop-empty">${t().empty} <a href="index.html#products">${t().shop}</a></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="cart-list">
+      ${data.items.map(item => `
+        <div class="cart-item" data-id="${item.id}">
+          <img src="${item.image || 'img/logo.png'}" alt="">
+          <div>
+            <h4>${productName(item, lang)}</h4>
+            <div class="sub">${formatVnd(item.price)}</div>
+            <div class="qty-control">
+              <button type="button" class="qty-minus">−</button>
+              <input type="number" class="qty-input" value="${item.quantity}" min="1" max="99">
+              <button type="button" class="qty-plus">+</button>
+            </div>
+          </div>
+          <div class="cart-item-right">
+            <div class="price">${formatVnd(item.price * item.quantity)}</div>
+            <button class="link-danger btn-remove">${t().remove}</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="cart-summary">
+      <div class="total">${t().total} <span>${formatVnd(data.total)}</span></div>
+      <div class="cart-summary-btns">
+        <a href="index.html#products" class="btn btn-outline">${t().continueShop}</a>
+        <a href="checkout.html" class="btn btn-primary">${t().checkout}</a>
+      </div>
+    </div>`;
+
+  el.querySelectorAll('.cart-item').forEach(row => {
+    const id = row.dataset.id;
+    const input = row.querySelector('.qty-input');
+    const update = async (qty) => {
+      qty = Math.max(1, Math.min(99, qty));
+      input.value = qty;
+      try {
+        await api.updateCartItem(id, qty);
+        await loadCart();
+      } catch (e) { showToast(e.message, 'error'); }
+    };
+    row.querySelector('.qty-minus').onclick = () => update(parseInt(input.value, 10) - 1);
+    row.querySelector('.qty-plus').onclick = () => update(parseInt(input.value, 10) + 1);
+    input.onchange = () => update(parseInt(input.value, 10) || 1);
+    row.querySelector('.btn-remove').onclick = async () => {
+      try {
+        await api.removeCartItem(id);
+        showToast(t().removed, 'success');
+        await loadCart();
+      } catch (e) { showToast(e.message, 'error'); }
+    };
+  });
+}
+
+async function loadCart() {
+  const el = document.getElementById('cartContent');
+  try {
+    const data = await api.cart();
+    cartCache = data;
+    refreshCartBadge();
+    renderCart(data);
+  } catch (e) {
+    el.innerHTML = `<div class="shop-empty">${e.message}</div>`;
+  }
+}
+
+applyPageLang();
+loadCart();
+</script>
+<style>
+.btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer;text-align:center}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:#eef4ff}
+.cart-summary-btns{display:flex;gap:10px;flex-wrap:wrap}
+</style>
+</body>
+</html>
+

@@ -149,3 +149,11 @@ npm run dev
 - `js/api.js` 新增 `updateHeaderLogo(lang)`
 - 首页、购物车、结算、账户页统一使用语言 Logo
 
+## 2026-08-12 — 购物车/结算页切换语言即时翻译
+
+### hnyzu-buy
+
+- `js/site-header.js`：`initSiteHeader({ onLangChange })` 支持页面语言回调
+- `cart.html`：切换语言后立即重渲染购物车（不等待 API）
+- `checkout.html`：切换语言后立即重渲染结算表单与商品名
+
