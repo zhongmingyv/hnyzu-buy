@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="api-base" content="https://api.eraworks.vn">
+<title>Thanh toán — ERAWORKS</title>
+<link rel="stylesheet" href="css/shop.css">
+<style>
+  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:1000px;margin:0 auto;padding:0 20px}
+  header{background:#fff;border-bottom:1px solid #e6ecf5;padding:16px 0}
+  .nav{display:flex;align-items:center;justify-content:space-between}
+  .logo{font-weight:800;color:var(--dark)}
+  .logo span{color:var(--primary)}
+  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
+  .btn:hover{background:var(--primary-dark)}
+  .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>ERAWORKS</span> Shop</a>
+    <a href="cart.html" class="shop-icon-btn">🛒<span class="cart-badge"></span></a>
+  </div>
+</header>
+
+<main class="shop-page">
+  <div class="container">
+    <h1 id="pageTitle">Thanh toán</h1>
+    <div id="checkoutView"></div>
+  </div>
+</main>
+
+<script type="module">
+import { api, formatVnd, productName, getLang, requireAuth, refreshCartBadge, showToast } from './js/api.js';
+
+const lang = getLang();
+const T = {
+  vi: {
+    title:'Thanh toán', addr:'Địa chỉ giao hàng', noAddr:'Chưa có địa chỉ.', addAddr:'Thêm địa chỉ',
+    payment:'Phương thức thanh toán', bank:'Chuyển khoản ngân hàng', bankDesc:'Chuyển khoản theo thông tin công ty, đơn hàng xử lý sau khi xác nhận.',
+    cod:'Thanh toán khi nhận hàng (COD)', codDesc:'Thanh toán tiền mặt khi giao hàng.',
+    note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng',
+    success:'Đặt hàng thành công!', orderNo:'Mã đơn:', backHome:'Về trang chủ', viewOrders:'Xem đơn hàng',
+    manageAddr:'Quản lý địa chỉ'
+  },
+  zh: {
+    title:'结算', addr:'收货地址', noAddr:'暂无地址。', addAddr:'添加地址',
+    payment:'支付方式', bank:'银行转账', bankDesc:'按公司账户转账，确认后处理订单。',
+    cod:'货到付款 (COD)', codDesc:'送货时现金支付。',
+    note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单',
+    success:'下单成功！', orderNo:'订单号：', backHome:'返回首页', viewOrders:'查看订单',
+    manageAddr:'管理地址'
+  },
+  en: {
+    title:'Checkout', addr:'Shipping Address', noAddr:'No address yet.', addAddr:'Add address',
+    payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Transfer to company account; order processed after confirmation.',
+    cod:'Cash on Delivery (COD)', codDesc:'Pay in cash upon delivery.',
+    note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order',
+    success:'Order placed successfully!', orderNo:'Order ID:', backHome:'Back to home', viewOrders:'View orders',
+    manageAddr:'Manage addresses'
+  }
+};
+const t = T[lang] || T.vi;
+document.getElementById('pageTitle').textContent = t.title;
+
+if (!requireAuth()) throw new Error('auth');
+
+let cartData = null;
+let addresses = [];
+let selectedAddressId = null;
+
+async function init() {
+  refreshCartBadge();
+  try {
+    const [cart, addrRes] = await Promise.all([api.cart(), api.addresses()]);
+    cartData = cart;
+    addresses = addrRes.addresses || [];
+    selectedAddressId = addresses.find(a => a.is_default)?.id || addresses[0]?.id || null;
+    if (!cartData.items?.length) {
+      location.href = 'cart.html';
+      return;
+    }
+    render();
+  } catch (e) {
+    document.getElementById('checkoutView').innerHTML = `<div class="shop-card shop-empty">${e.message}</div>`;
+  }
+}
+
+function renderAddressOptions() {
+  if (!addresses.length) {
+    return `<p>${t.noAddr} <a href="account.html?tab=addresses">${t.addAddr}</a></p>`;
+  }
+  return addresses.map(a => `
+    <label class="payment-option" style="margin-bottom:8px">
+      <input type="radio" name="address" value="${a.id}" ${a.id === selectedAddressId ? 'checked' : ''}>
+      <div>
+        <b>${a.name} · ${a.phone}</b>
+        <span>${a.detail}, ${a.ward ? a.ward + ', ' : ''}${a.district}, ${a.province}</span>
+        ${a.is_default ? '<span style="color:var(--primary);font-size:12px;font-weight:700"> ✓ Default</span>' : ''}
+      </div>
+    </label>
+  `).join('') + `<p style="margin-top:8px"><a href="account.html?tab=addresses">${t.manageAddr}</a></p>`;
+}
+
+function render() {
+  document.getElementById('checkoutView').innerHTML = `
+    <div class="checkout-grid">
+      <div>
+        <div class="shop-card">
+          <h3 style="margin-bottom:16px;color:var(--dark)">${t.addr}</h3>
+          <div id="addressList">${renderAddressOptions()}</div>
+        </div>
+        <div class="shop-card">
+          <h3 style="margin-bottom:16px;color:var(--dark)">${t.payment}</h3>
+          <div class="payment-options">
+            <label class="payment-option">
+              <input type="radio" name="payment" value="bank_transfer" checked>
+              <div><b>${t.bank}</b><span>${t.bankDesc}</span></div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="cod">
+              <div><b>${t.cod}</b><span>${t.codDesc}</span></div>
+            </label>
+          </div>
+        </div>
+        <div class="shop-card">
+          <div class="form-group">
+            <label>${t.note}</label>
+            <textarea id="orderNote" rows="3" placeholder=""></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="shop-card">
+        <h3 style="margin-bottom:16px;color:var(--dark)">${t.orderSummary}</h3>
+        ${cartData.items.map(i => `
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px">
+            <span>${productName(i, lang)} × ${i.quantity}</span>
+            <span>${formatVnd(i.price * i.quantity)}</span>
+          </div>
+        `).join('')}
+        <div class="cart-summary" style="border-top:2px solid #eef2f9;margin-top:12px">
+          <div class="total">${t.total}: <span>${formatVnd(cartData.total)}</span></div>
+        </div>
+        <button class="btn" style="width:100%;margin-top:20px" id="placeOrderBtn">${t.place}</button>
+      </div>
+    </div>`;
+
+  document.querySelectorAll('input[name="address"]').forEach(r => {
+    r.onchange = () => { selectedAddressId = r.value; };
+  });
+
+  document.getElementById('placeOrderBtn').onclick = placeOrder;
+}
+
+async function placeOrder() {
+  const payment = document.querySelector('input[name="payment"]:checked')?.value;
+  const note = document.getElementById('orderNote')?.value?.trim() || null;
+  const addrId = document.querySelector('input[name="address"]:checked')?.value || selectedAddressId;
+
+  if (!addrId) {
+    showToast(t.noAddr, 'error');
+    return;
+  }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  try {
+    const result = await api.checkout(addrId, payment, note);
+    refreshCartBadge();
+    document.getElementById('checkoutView').innerHTML = `
+      <div class="shop-card order-success">
+        <div class="icon">✅</div>
+        <h2>${t.success}</h2>
+        <p style="margin:12px 0;color:var(--muted)">${t.orderNo} <b>${result.order.id.slice(0, 8).toUpperCase()}</b></p>
+        <p style="margin-bottom:24px;font-size:20px;font-weight:800;color:var(--primary)">${formatVnd(result.order.total_amount)}</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="index.html" class="btn btn-outline">${t.backHome}</a>
+          <a href="account.html?tab=orders" class="btn">${t.viewOrders}</a>
+        </div>
+      </div>`;
+  } catch (e) {
+    showToast(e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

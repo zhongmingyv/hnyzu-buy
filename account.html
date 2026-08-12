@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="api-base" content="https://api.eraworks.vn">
+<title>Tài khoản — ERAWORKS</title>
+<link rel="stylesheet" href="css/shop.css">
+<style>
+  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:900px;margin:0 auto;padding:0 20px}
+  header{background:#fff;border-bottom:1px solid #e6ecf5;padding:16px 0}
+  .nav{display:flex;align-items:center;justify-content:space-between}
+  .logo{font-weight:800;color:var(--dark)}
+  .logo span{color:var(--primary)}
+  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
+  .btn:hover{background:var(--primary-dark)}
+  .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+  .btn-ghost{background:transparent;border:1px solid #dbe4f0;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>ERAWORKS</span> Shop</a>
+    <a href="cart.html" class="shop-icon-btn">🛒<span class="cart-badge"></span></a>
+  </div>
+</header>
+
+<main class="shop-page">
+  <div class="container">
+    <h1 id="pageTitle">Tài khoản</h1>
+    <div id="authSection" class="shop-card auth-steps"></div>
+    <div id="accountSection" style="display:none">
+      <div class="shop-tabs">
+        <button class="shop-tab active" data-tab="addresses" id="tabAddr">Địa chỉ</button>
+        <button class="shop-tab" data-tab="orders" id="tabOrders">Đơn hàng</button>
+        <button class="shop-tab" data-tab="profile" id="tabProfile">Hồ sơ</button>
+      </div>
+      <div id="tabContent"></div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { api, formatVnd, getLang, getToken, getStoredUser, setAuth, clearAuth, refreshCartBadge, showToast, qs } from './js/api.js';
+
+const lang = getLang();
+const T = {
+  vi: {
+    title:'Tài khoản', login:'Đăng nhập / Đăng ký', email:'Email', sendCode:'Gửi mã', code:'Mã xác minh',
+    name:'Họ tên (tuỳ chọn)', verify:'Xác minh', devHint:'Mã dev:', logout:'Đăng xuất',
+    addresses:'Địa chỉ giao hàng', orders:'Đơn hàng', profile:'Hồ sơ',
+    addAddr:'Thêm địa chỉ mới', phone:'Số điện thoại', province:'Tỉnh/Thành', district:'Quận/Huyện',
+    ward:'Phường/Xã', detail:'Địa chỉ chi tiết', save:'Lưu', cancel:'Huỷ', default:'Mặc định',
+    setDefault:'Đặt mặc định', edit:'Sửa', delete:'Xóa', noOrders:'Chưa có đơn hàng.',
+    status:'Trạng thái', pending:'Chờ xử lý', payment:'Thanh toán'
+  },
+  zh: {
+    title:'账户', login:'登录 / 注册', email:'邮箱', sendCode:'发送验证码', code:'验证码',
+    name:'姓名（可选）', verify:'验证', devHint:'开发模式验证码：', logout:'退出登录',
+    addresses:'收货地址', orders:'订单', profile:'个人资料',
+    addAddr:'添加新地址', phone:'电话', province:'省/市', district:'区/县',
+    ward:'街道/乡', detail:'详细地址', save:'保存', cancel:'取消', default:'默认',
+    setDefault:'设为默认', edit:'编辑', delete:'删除', noOrders:'暂无订单。',
+    status:'状态', pending:'待处理', payment:'支付'
+  },
+  en: {
+    title:'Account', login:'Login / Register', email:'Email', sendCode:'Send Code', code:'Verification Code',
+    name:'Name (optional)', verify:'Verify', devHint:'Dev code:', logout:'Logout',
+    addresses:'Shipping Addresses', orders:'Orders', profile:'Profile',
+    addAddr:'Add New Address', phone:'Phone', province:'Province/City', district:'District',
+    ward:'Ward', detail:'Street Address', save:'Save', cancel:'Cancel', default:'Default',
+    setDefault:'Set Default', edit:'Edit', delete:'Delete', noOrders:'No orders yet.',
+    status:'Status', pending:'Pending', payment:'Payment'
+  }
+};
+const t = T[lang] || T.vi;
+document.getElementById('pageTitle').textContent = t.title;
+document.getElementById('tabAddr').textContent = t.addresses;
+document.getElementById('tabOrders').textContent = t.orders;
+document.getElementById('tabProfile').textContent = t.profile;
+
+refreshCartBadge();
+
+let currentUser = getStoredUser();
+let devCode = '';
+
+function renderAuth() {
+  document.getElementById('authSection').style.display = 'block';
+  document.getElementById('accountSection').style.display = 'none';
+  document.getElementById('authSection').innerHTML = `
+    <h2 style="margin-bottom:20px;color:var(--dark);text-align:center">${t.login}</h2>
+    <div class="auth-step active" id="step1">
+      <div class="form-grid">
+        <div class="form-group"><label>${t.email}</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
+        <div class="form-group"><label>${t.name}</label><input type="text" id="authName"></div>
+        <button class="btn" id="sendCodeBtn">${t.sendCode}</button>
+      </div>
+    </div>
+    <div class="auth-step" id="step2">
+      <div class="form-grid">
+        <p style="font-size:14px;color:var(--muted);margin-bottom:4px" id="emailHint"></p>
+        <div class="form-group"><label>${t.code}</label><input type="text" id="authCode" class="otp-input" maxlength="6" placeholder="000000"></div>
+        <p id="devCodeHint" style="font-size:13px;color:#e8720c;display:none"></p>
+        <button class="btn" id="verifyBtn">${t.verify}</button>
+        <button class="btn btn-ghost" id="backBtn">${t.cancel}</button>
+      </div>
+    </div>`;
+
+  document.getElementById('sendCodeBtn').onclick = async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    if (!email) return showToast(t.email, 'error');
+    try {
+      const res = await api.sendCode(email);
+      devCode = res.devCode || '';
+      document.getElementById('emailHint').textContent = email;
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('active');
+      if (devCode) {
+        const hint = document.getElementById('devCodeHint');
+        hint.style.display = 'block';
+        hint.textContent = `${t.devHint} ${devCode}`;
+      }
+      showToast(lang === 'zh' ? '验证码已发送' : lang === 'en' ? 'Code sent' : 'Đã gửi mã', 'success');
+    } catch (e) { showToast(e.message, 'error'); }
+  };
+
+  document.getElementById('backBtn').onclick = () => {
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+  };
+
+  document.getElementById('verifyBtn').onclick = async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const code = document.getElementById('authCode').value.trim();
+    const name = document.getElementById('authName').value.trim() || null;
+    if (!code) return showToast(t.code, 'error');
+    try {
+      const res = await api.verify(email, code, name);
+      setAuth(res.token, res.user);
+      currentUser = res.user;
+      showToast(lang === 'zh' ? '登录成功' : lang === 'en' ? 'Logged in' : 'Đăng nhập thành công', 'success');
+      const ret = qs('return');
+      if (ret) { location.href = ret; return; }
+      renderAccount();
+    } catch (e) { showToast(e.message, 'error'); }
+  };
+}
+
+function renderAccount() {
+  document.getElementById('authSection').style.display = 'none';
+  document.getElementById('accountSection').style.display = 'block';
+
+  document.querySelectorAll('.shop-tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.shop-tab').forEach(x => x.classList.remove('active'));
+      tab.classList.add('active');
+      loadTab(tab.dataset.tab);
+    };
+  });
+
+  const initTab = qs('tab') || 'addresses';
+  document.querySelector(`.shop-tab[data-tab="${initTab}"]`)?.click() || loadTab('addresses');
+}
+
+async function loadTab(tab) {
+  const el = document.getElementById('tabContent');
+  if (tab === 'addresses') await loadAddresses(el);
+  else if (tab === 'orders') await loadOrders(el);
+  else if (tab === 'profile') loadProfile(el);
+}
+
+async function loadAddresses(el) {
+  el.innerHTML = '<div class="shop-empty">...</div>';
+  try {
+    const { addresses } = await api.addresses();
+    el.innerHTML = `
+      <div class="shop-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="color:var(--dark)">${t.addresses}</h3>
+          <button class="btn btn-outline btn-sm" id="showAddrForm">${t.addAddr}</button>
+        </div>
+        <div class="address-list" id="addrList">
+          ${(addresses || []).map(a => `
+            <div class="address-card ${a.is_default ? 'default' : ''}" data-id="${a.id}">
+              ${a.is_default ? `<span class="tag-default">${t.default}</span>` : ''}
+              <p><b>${a.name}</b> · ${a.phone}</p>
+              <p>${a.detail}${a.ward ? ', ' + a.ward : ''}, ${a.district}, ${a.province}</p>
+              <div class="address-actions">
+                ${!a.is_default ? `<button class="btn-default">${t.setDefault}</button>` : ''}
+                <button class="btn-edit">${t.edit}</button>
+                <button class="btn-delete" style="color:#e53e3e">${t.delete}</button>
+              </div>
+            </div>
+          `).join('') || `<p class="shop-empty">${t.addAddr}</p>`}
+        </div>
+        <div id="addrFormWrap" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid #eef2f9"></div>
+      </div>`;
+
+    document.getElementById('showAddrForm').onclick = () => showAddressForm();
+    el.querySelectorAll('.address-card').forEach(card => {
+      const id = card.dataset.id;
+      card.querySelector('.btn-default')?.addEventListener('click', async () => {
+        await api.setDefaultAddress(id);
+        loadTab('addresses');
+      });
+      card.querySelector('.btn-edit')?.addEventListener('click', () => showAddressForm(id, addresses.find(a => a.id === id)));
+      card.querySelector('.btn-delete')?.addEventListener('click', async () => {
+        if (!confirm('OK?')) return;
+        await api.deleteAddress(id);
+        loadTab('addresses');
+      });
+    });
+  } catch (e) { el.innerHTML = `<div class="shop-empty">${e.message}</div>`; }
+}
+
+function showAddressForm(editId = null, data = null) {
+  const wrap = document.getElementById('addrFormWrap');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <div class="form-grid">
+      <div class="form-row-2">
+        <div class="form-group"><label>${t.name}</label><input id="fName" value="${data?.name || ''}"></div>
+        <div class="form-group"><label>${t.phone}</label><input id="fPhone" value="${data?.phone || ''}"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>${t.province}</label><input id="fProvince" value="${data?.province || ''}"></div>
+        <div class="form-group"><label>${t.district}</label><input id="fDistrict" value="${data?.district || ''}"></div>
+      </div>
+      <div class="form-group"><label>${t.ward}</label><input id="fWard" value="${data?.ward || ''}"></div>
+      <div class="form-group"><label>${t.detail}</label><input id="fDetail" value="${data?.detail || ''}"></div>
+      <div class="form-actions">
+        <button class="btn" id="saveAddr">${t.save}</button>
+        <button class="btn btn-ghost" id="cancelAddr">${t.cancel}</button>
+      </div>
+    </div>`;
+
+  document.getElementById('cancelAddr').onclick = () => { wrap.style.display = 'none'; };
+  document.getElementById('saveAddr').onclick = async () => {
+    const payload = {
+      name: document.getElementById('fName').value.trim(),
+      phone: document.getElementById('fPhone').value.trim(),
+      province: document.getElementById('fProvince').value.trim(),
+      district: document.getElementById('fDistrict').value.trim(),
+      ward: document.getElementById('fWard').value.trim() || null,
+      detail: document.getElementById('fDetail').value.trim(),
+      is_default: !editId
+    };
+    try {
+      if (editId) await api.updateAddress(editId, payload);
+      else await api.createAddress(payload);
+      showToast(t.save, 'success');
+      loadTab('addresses');
+    } catch (e) { showToast(e.message, 'error'); }
+  };
+}
+
+async function loadOrders(el) {
+  el.innerHTML = '<div class="shop-empty">...</div>';
+  try {
+    const { orders } = await api.orders();
+    if (!orders?.length) {
+      el.innerHTML = `<div class="shop-card shop-empty">${t.noOrders}</div>`;
+      return;
+    }
+    el.innerHTML = orders.map(o => `
+      <div class="shop-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <b>#${o.id.slice(0, 8).toUpperCase()}</b>
+          <span style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleString()}</span>
+        </div>
+        <p style="font-size:14px;margin-bottom:8px">${t.status}: <b>${o.status === 'pending' ? t.pending : o.status}</b> · ${t.payment}: ${o.payment_method === 'cod' ? 'COD' : 'Bank'}</p>
+        ${(o.items || []).map(i => `<p style="font-size:14px;color:var(--muted)">${i.product_name} × ${i.quantity} — ${formatVnd(i.price * i.quantity)}</p>`).join('')}
+        <p style="margin-top:12px;font-weight:800;color:var(--primary)">${formatVnd(o.total_amount)}</p>
+      </div>
+    `).join('');
+  } catch (e) { el.innerHTML = `<div class="shop-empty">${e.message}</div>`; }
+}
+
+function loadProfile(el) {
+  el.innerHTML = `
+    <div class="shop-card">
+      <p style="margin-bottom:12px"><b>Email:</b> ${currentUser?.email || ''}</p>
+      <div class="form-group" style="max-width:360px">
+        <label>${t.name}</label>
+        <input id="profileName" value="${currentUser?.name || ''}">
+      </div>
+      <div class="form-actions">
+        <button class="btn" id="saveProfile">${t.save}</button>
+        <button class="btn btn-ghost" id="logoutBtn">${t.logout}</button>
+      </div>
+    </div>`;
+
+  document.getElementById('saveProfile').onclick = async () => {
+    const name = document.getElementById('profileName').value.trim();
+    try {
+      const res = await api.updateProfile(name);
+      currentUser = res.user;
+      setAuth(getToken(), res.user);
+      showToast(t.save, 'success');
+    } catch (e) { showToast(e.message, 'error'); }
+  };
+
+  document.getElementById('logoutBtn').onclick = () => {
+    clearAuth();
+    currentUser = null;
+    renderAuth();
+    refreshCartBadge();
+  };
+}
+
+if (getToken()) {
+  api.me().then(res => {
+    currentUser = res.user;
+    setAuth(getToken(), res.user);
+    renderAccount();
+  }).catch(() => renderAuth());
+} else {
+  renderAuth();
+}
+</script>
+<style>.btn-sm{padding:10px 18px;font-size:14px}</style>
+</body>
+</html>
