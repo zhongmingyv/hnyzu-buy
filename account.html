@@ -38,7 +38,7 @@
 </main>
 
 <script type="module">
-import { api, formatVnd, getLang, getToken, getStoredUser, setAuth, clearAuth, refreshCartBadge, showToast, qs } from './js/api.js';
+import { api, formatVnd, getLang, getToken, getStoredUser, setAuth, clearAuth, refreshCartBadge, showToast, qs, updateUserBtn } from './js/api.js';
 import { initSiteHeader } from './js/site-header.js';
 
 initSiteHeader();
@@ -142,13 +142,16 @@ function renderAuth() {
       const ret = qs('return');
       if (ret) { location.href = ret; return; }
       renderAccount();
+      updateUserBtn();
     } catch (e) { showToast(e.message, 'error'); }
   };
+  updateUserBtn();
 }
 
 function renderAccount() {
   document.getElementById('authSection').style.display = 'none';
   document.getElementById('accountSection').style.display = 'block';
+  updateUserBtn();
 
   document.querySelectorAll('.shop-tab').forEach(tab => {
     tab.onclick = () => {
@@ -303,17 +306,25 @@ function loadProfile(el) {
   document.getElementById('logoutBtn').onclick = () => {
     clearAuth();
     currentUser = null;
+    updateUserBtn();
     renderAuth();
     refreshCartBadge();
   };
 }
 
 if (getToken()) {
+  document.getElementById('authSection').style.display = 'block';
+  document.getElementById('authSection').innerHTML = '<div class="shop-empty">...</div>';
   api.me().then(res => {
     currentUser = res.user;
     setAuth(getToken(), res.user);
     renderAccount();
-  }).catch(() => renderAuth());
+  }).catch(() => {
+    clearAuth();
+    currentUser = null;
+    updateUserBtn();
+    renderAuth();
+  });
 } else {
   renderAuth();
 }

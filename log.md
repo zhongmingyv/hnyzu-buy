@@ -164,3 +164,10 @@ npm run dev
 - `checkout.html`：修复 `t is not a function`（翻译函数改为 `getText()`）
 - `index.html`：API 加载失败时使用本地 fallback 价格，避免显示「—」
 
+## 2026-08-12 — 修复退出/会话失效后 header 仍显示用户名
+
+### hnyzu-buy
+
+- `account.html`：退出登录、会话失效时调用 `updateUserBtn()` 同步 header
+- `account.html`：有 token 时先验证再展示订单，避免结算后跳转到登录页
+
