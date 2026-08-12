@@ -157,3 +157,10 @@ npm run dev
 - `cart.html`：切换语言后立即重渲染购物车（不等待 API）
 - `checkout.html`：切换语言后立即重渲染结算表单与商品名
 
+## 2026-08-12 — 修复结算页报错 & 首页价格 fallback
+
+### hnyzu-buy
+
+- `checkout.html`：修复 `t is not a function`（翻译函数改为 `getText()`）
+- `index.html`：API 加载失败时使用本地 fallback 价格，避免显示「—」
+

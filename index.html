@@ -786,6 +786,22 @@ window.updateHeaderLogo = updateHeaderLogo;
 const productPrices = {};
 const productMap = {};
 
+const FALLBACK_PRODUCTS = [
+  { id: 'p1', price: 15000000, name_vi: 'Phần mềm quản lý khách sạn', name_zh: '酒店管理软件', name_en: 'Hotel Management Software' },
+  { id: 'p2', price: 2500000, name_vi: 'Đồng hồ nước & điện thông minh', name_zh: '智能水电表', name_en: 'Smart Water & Electricity Meters' },
+  { id: 'p3', price: 1800000, name_vi: 'Khóa thông minh', name_zh: '智能门锁', name_en: 'Smart Lock' },
+  { id: 'p4', price: 850000, name_vi: 'Đầu đọc / ghi thẻ', name_zh: '读写卡器', name_en: 'Card Reader / Writer' },
+];
+
+function applyProducts(products) {
+  (products || []).forEach(p => {
+    productMap[p.id] = p;
+    productPrices[p.id] = p.price;
+    const el = document.querySelector(`[data-price="${p.id}"]`);
+    if (el && p.price != null) el.textContent = formatVnd(p.price);
+  });
+}
+
 const QTY_I18N = {
   vi: { title: 'Chọn số lượng', confirm: 'Xác nhận', cancel: 'Huỷ' },
   zh: { title: '选择数量', confirm: '确认', cancel: '取消' },
@@ -853,14 +869,10 @@ async function openQtyPicker(label, productId) {
 async function loadProducts() {
   try {
     const { products } = await api.products();
-    products.forEach(p => {
-      productMap[p.id] = p;
-      productPrices[p.id] = p.price;
-      const el = document.querySelector(`[data-price="${p.id}"]`);
-      if (el) el.textContent = formatVnd(p.price);
-    });
+    applyProducts(products);
   } catch (e) {
-    console.warn('Products load failed', e);
+    console.warn('Products load failed, using fallback prices', e);
+    applyProducts(FALLBACK_PRODUCTS);
   }
 }
 
@@ -914,6 +926,7 @@ document.querySelectorAll('.card[data-product-id]').forEach(card => {
   card.querySelector('.btn-buy-now')?.addEventListener('click', () => addToCart(id, true));
 });
 
+applyProducts(FALLBACK_PRODUCTS);
 loadProducts();
 updateUserBtn();
 updateHeaderLogo();
