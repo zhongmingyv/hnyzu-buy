@@ -72,3 +72,10 @@ npm run dev
 - 更新 `.dev.vars` 中的 `RESEND_API_KEY`（本地开发）
 - 若已部署生产，需手动执行：`npx wrangler secret put RESEND_API_KEY --env production`
 
+## 2026-08-12 — 产品卡片购买数量角标
+
+### hnyzu-buy
+
+- `index.html`：「立即购买」按钮右上角增加红色数量角标（显示该商品在购物车中的数量）
+- `js/api.js`：新增 `updateProductQtyBadges()`，加购/页面加载时同步更新各产品角标
+

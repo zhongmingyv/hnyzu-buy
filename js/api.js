@@ -97,6 +97,16 @@ export function requireAuth(redirect = 'account.html') {
   return true;
 }
 
+export function updateProductQtyBadges(items) {
+  const qtyMap = {};
+  (items || []).forEach(i => { qtyMap[i.product_id] = i.quantity; });
+  document.querySelectorAll('[data-product-qty]').forEach(el => {
+    const qty = qtyMap[el.dataset.productQty] || 0;
+    el.textContent = qty > 0 ? String(qty) : '';
+    el.style.display = qty > 0 ? 'flex' : 'none';
+  });
+}
+
 export function updateCartBadge(count) {
   document.querySelectorAll('.cart-badge').forEach(el => {
     el.textContent = count > 0 ? String(count) : '';
@@ -105,11 +115,19 @@ export function updateCartBadge(count) {
 }
 
 export async function refreshCartBadge() {
-  if (!getToken()) { updateCartBadge(0); return; }
+  if (!getToken()) {
+    updateCartBadge(0);
+    updateProductQtyBadges([]);
+    return;
+  }
   try {
     const data = await api.cart();
     updateCartBadge(data.count || 0);
-  } catch { updateCartBadge(0); }
+    updateProductQtyBadges(data.items || []);
+  } catch {
+    updateCartBadge(0);
+    updateProductQtyBadges([]);
+  }
 }
 
 export function showToast(msg, type = 'info') {
