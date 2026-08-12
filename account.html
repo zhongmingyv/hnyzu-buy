@@ -17,6 +17,10 @@
   .btn:hover{background:var(--primary-dark)}
   .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
   .btn-ghost{background:transparent;border:1px solid #dbe4f0;color:var(--muted)}
+  .auth-mode-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+  .auth-mode-tabs button{padding:10px 22px;border-radius:999px;border:1.5px solid #dbe4f0;background:#fff;color:var(--muted);font-weight:700;cursor:pointer}
+  .auth-mode-tabs button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .auth-switch-link{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--primary);cursor:pointer}
 </style>
 </head>
 <body>
@@ -43,11 +47,14 @@ import { initSiteHeader } from './js/site-header.js';
 
 initSiteHeader();
 
-const lang = getLang();
+let lang = getLang();
 const T = {
   vi: {
-    title:'Tài khoản', login:'Đăng nhập / Đăng ký', email:'Email', sendCode:'Gửi mã', code:'Mã xác minh',
-    name:'Họ tên (tuỳ chọn)', verify:'Xác minh', devHint:'Mã dev:', logout:'Đăng xuất',
+    title:'Tài khoản', login:'Đăng nhập', register:'Đăng ký', email:'Email', password:'Mật khẩu',
+    confirmPassword:'Xác nhận mật khẩu', loginBtn:'Đăng nhập', registerBtn:'Đăng ký',
+    name:'Họ tên (tuỳ chọn)', sendCode:'Gửi mã', code:'Mã xác minh', verify:'Xác minh',
+    devHint:'Mã dev:', logout:'Đăng xuất', useOtp:'Đăng nhập bằng mã email', usePassword:'Đăng nhập bằng mật khẩu',
+    pwdMismatch:'Mật khẩu không khớp', pwdShort:'Mật khẩu tối thiểu 6 ký tự', newPassword:'Mật khẩu mới (tuỳ chọn)',
     addresses:'Địa chỉ giao hàng', orders:'Đơn hàng', profile:'Hồ sơ',
     addAddr:'Thêm địa chỉ mới', phone:'Số điện thoại', province:'Tỉnh/Thành', district:'Quận/Huyện',
     ward:'Phường/Xã', detail:'Địa chỉ chi tiết', save:'Lưu', cancel:'Huỷ', default:'Mặc định',
@@ -55,8 +62,11 @@ const T = {
     status:'Trạng thái', pending:'Chờ xử lý', payment:'Thanh toán', bank:'Chuyển khoản ngân hàng'
   },
   zh: {
-    title:'账户', login:'登录 / 注册', email:'邮箱', sendCode:'发送验证码', code:'验证码',
-    name:'姓名（可选）', verify:'验证', devHint:'开发模式验证码：', logout:'退出登录',
+    title:'账户', login:'登录', register:'注册', email:'邮箱', password:'密码',
+    confirmPassword:'确认密码', loginBtn:'登录', registerBtn:'注册',
+    name:'姓名（可选）', sendCode:'发送验证码', code:'验证码', verify:'验证',
+    devHint:'开发模式验证码：', logout:'退出登录', useOtp:'使用邮箱验证码登录', usePassword:'使用密码登录',
+    pwdMismatch:'两次密码不一致', pwdShort:'密码至少 6 位', newPassword:'新密码（可选）',
     addresses:'收货地址', orders:'订单', profile:'个人资料',
     addAddr:'添加新地址', phone:'电话', province:'省/市', district:'区/县',
     ward:'街道/乡', detail:'详细地址', save:'保存', cancel:'取消', default:'默认',
@@ -64,8 +74,11 @@ const T = {
     status:'状态', pending:'待处理', payment:'支付', bank:'银行转账'
   },
   en: {
-    title:'Account', login:'Login / Register', email:'Email', sendCode:'Send Code', code:'Verification Code',
-    name:'Name (optional)', verify:'Verify', devHint:'Dev code:', logout:'Logout',
+    title:'Account', login:'Login', register:'Register', email:'Email', password:'Password',
+    confirmPassword:'Confirm Password', loginBtn:'Login', registerBtn:'Register',
+    name:'Name (optional)', sendCode:'Send Code', code:'Verification Code', verify:'Verify',
+    devHint:'Dev code:', logout:'Logout', useOtp:'Login with email code', usePassword:'Login with password',
+    pwdMismatch:'Passwords do not match', pwdShort:'Password must be at least 6 characters', newPassword:'New password (optional)',
     addresses:'Shipping Addresses', orders:'Orders', profile:'Profile',
     addAddr:'Add New Address', phone:'Phone', province:'Province/City', district:'District',
     ward:'Ward', detail:'Street Address', save:'Save', cancel:'Cancel', default:'Default',
@@ -73,11 +86,11 @@ const T = {
     status:'Status', pending:'Pending', payment:'Payment', bank:'Bank Transfer'
   }
 };
-const t = T[lang] || T.vi;
-document.getElementById('pageTitle').textContent = t.title;
-document.getElementById('tabAddr').textContent = t.addresses;
-document.getElementById('tabOrders').textContent = t.orders;
-document.getElementById('tabProfile').textContent = t.profile;
+const t = () => T[lang] || T.vi;
+document.getElementById('pageTitle').textContent = t().title;
+document.getElementById('tabAddr').textContent = t().addresses;
+document.getElementById('tabOrders').textContent = t().orders;
+document.getElementById('tabProfile').textContent = t().profile;
 
 refreshCartBadge();
 
@@ -88,27 +101,114 @@ function renderAuth() {
   document.getElementById('authSection').style.display = 'block';
   document.getElementById('accountSection').style.display = 'none';
   document.getElementById('authSection').innerHTML = `
-    <h2 style="margin-bottom:20px;color:var(--dark);text-align:center">${t.login}</h2>
-    <div class="auth-step active" id="step1">
+    <div class="auth-mode-tabs">
+      <button type="button" class="active" data-auth-mode="login">${t().login}</button>
+      <button type="button" data-auth-mode="register">${t().register}</button>
+    </div>
+    <div id="authLoginPanel">
       <div class="form-grid">
-        <div class="form-group"><label>${t.email}</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
-        <div class="form-group"><label>${t.name}</label><input type="text" id="authName"></div>
-        <button class="btn" id="sendCodeBtn">${t.sendCode}</button>
+        <div class="form-group"><label>${t().email}</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
+        <div class="form-group"><label>${t().password}</label><input type="password" id="loginPassword" autocomplete="current-password"></div>
+        <button class="btn" id="loginBtn">${t().loginBtn}</button>
+      </div>
+      <a class="auth-switch-link" id="showOtpLink">${t().useOtp}</a>
+    </div>
+    <div id="authRegisterPanel" style="display:none">
+      <div class="form-grid">
+        <div class="form-group"><label>${t().email}</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
+        <div class="form-group"><label>${t().password}</label><input type="password" id="regPassword" autocomplete="new-password"></div>
+        <div class="form-group"><label>${t().confirmPassword}</label><input type="password" id="regPassword2" autocomplete="new-password"></div>
+        <div class="form-group"><label>${t().name}</label><input type="text" id="regName"></div>
+        <button class="btn" id="registerBtn">${t().registerBtn}</button>
       </div>
     </div>
-    <div class="auth-step" id="step2">
-      <div class="form-grid">
-        <p style="font-size:14px;color:var(--muted);margin-bottom:4px" id="emailHint"></p>
-        <div class="form-group"><label>${t.code}</label><input type="text" id="authCode" class="otp-input" maxlength="6" placeholder="000000"></div>
-        <p id="devCodeHint" style="font-size:13px;color:#e8720c;display:none"></p>
-        <button class="btn" id="verifyBtn">${t.verify}</button>
-        <button class="btn btn-ghost" id="backBtn">${t.cancel}</button>
+    <div id="authOtpPanel" style="display:none">
+      <div class="auth-step active" id="step1">
+        <div class="form-grid">
+          <div class="form-group"><label>${t().email}</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
+          <div class="form-group"><label>${t().name}</label><input type="text" id="authName"></div>
+          <div class="form-group"><label>${t().password}</label><input type="password" id="authPassword" autocomplete="new-password"></div>
+          <button class="btn" id="sendCodeBtn">${t().sendCode}</button>
+        </div>
       </div>
+      <div class="auth-step" id="step2">
+        <div class="form-grid">
+          <p style="font-size:14px;color:var(--muted);margin-bottom:4px" id="emailHint"></p>
+          <div class="form-group"><label>${t().code}</label><input type="text" id="authCode" class="otp-input" maxlength="6" placeholder="000000"></div>
+          <p id="devCodeHint" style="font-size:13px;color:#e8720c;display:none"></p>
+          <button class="btn" id="verifyBtn">${t().verify}</button>
+          <button class="btn btn-ghost" id="backBtn">${t().cancel}</button>
+        </div>
+      </div>
+      <a class="auth-switch-link" id="showPasswordLink">${t().usePassword}</a>
     </div>`;
+
+  const loginPanel = document.getElementById('authLoginPanel');
+  const registerPanel = document.getElementById('authRegisterPanel');
+  const otpPanel = document.getElementById('authOtpPanel');
+  const modeTabs = document.querySelectorAll('[data-auth-mode]');
+
+  function setAuthMode(mode) {
+    modeTabs.forEach(b => b.classList.toggle('active', b.dataset.authMode === mode));
+    loginPanel.style.display = mode === 'login' ? 'block' : 'none';
+    registerPanel.style.display = mode === 'register' ? 'block' : 'none';
+    otpPanel.style.display = 'none';
+  }
+
+  modeTabs.forEach(btn => {
+    btn.onclick = () => setAuthMode(btn.dataset.authMode);
+  });
+
+  document.getElementById('showOtpLink').onclick = (e) => {
+    e.preventDefault();
+    loginPanel.style.display = 'none';
+    registerPanel.style.display = 'none';
+    otpPanel.style.display = 'block';
+    modeTabs.forEach(b => b.classList.remove('active'));
+  };
+
+  document.getElementById('showPasswordLink').onclick = (e) => {
+    e.preventDefault();
+    setAuthMode('login');
+  };
+
+  async function afterAuth(res) {
+    setAuth(res.token, res.user);
+    currentUser = res.user;
+    showToast(lang === 'zh' ? '登录成功' : lang === 'en' ? 'Logged in' : 'Đăng nhập thành công', 'success');
+    const ret = qs('return');
+    if (ret) { location.href = ret; return; }
+    renderAccount();
+    updateUserBtn();
+  }
+
+  document.getElementById('loginBtn').onclick = async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) return showToast(t().email, 'error');
+    try {
+      const res = await api.login(email, password);
+      await afterAuth(res);
+    } catch (e) { showToast(e.message, 'error'); }
+  };
+
+  document.getElementById('registerBtn').onclick = async () => {
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const password2 = document.getElementById('regPassword2').value;
+    const name = document.getElementById('regName').value.trim() || null;
+    if (!email) return showToast(t().email, 'error');
+    if (password.length < 6) return showToast(t().pwdShort, 'error');
+    if (password !== password2) return showToast(t().pwdMismatch, 'error');
+    try {
+      const res = await api.register(email, password, name);
+      await afterAuth(res);
+    } catch (e) { showToast(e.message, 'error'); }
+  };
 
   document.getElementById('sendCodeBtn').onclick = async () => {
     const email = document.getElementById('authEmail').value.trim();
-    if (!email) return showToast(t.email, 'error');
+    if (!email) return showToast(t().email, 'error');
     try {
       const res = await api.sendCode(email);
       devCode = res.devCode || '';
@@ -118,7 +218,7 @@ function renderAuth() {
       if (devCode) {
         const hint = document.getElementById('devCodeHint');
         hint.style.display = 'block';
-        hint.textContent = `${t.devHint} ${devCode}`;
+        hint.textContent = `${t().devHint} ${devCode}`;
       }
       showToast(lang === 'zh' ? '验证码已发送' : lang === 'en' ? 'Code sent' : 'Đã gửi mã', 'success');
     } catch (e) { showToast(e.message, 'error'); }
@@ -133,18 +233,15 @@ function renderAuth() {
     const email = document.getElementById('authEmail').value.trim();
     const code = document.getElementById('authCode').value.trim();
     const name = document.getElementById('authName').value.trim() || null;
-    if (!code) return showToast(t.code, 'error');
+    const password = document.getElementById('authPassword').value || null;
+    if (!code) return showToast(t().code, 'error');
+    if (password && password.length < 6) return showToast(t().pwdShort, 'error');
     try {
-      const res = await api.verify(email, code, name);
-      setAuth(res.token, res.user);
-      currentUser = res.user;
-      showToast(lang === 'zh' ? '登录成功' : lang === 'en' ? 'Logged in' : 'Đăng nhập thành công', 'success');
-      const ret = qs('return');
-      if (ret) { location.href = ret; return; }
-      renderAccount();
-      updateUserBtn();
+      const res = await api.verify(email, code, name, password);
+      await afterAuth(res);
     } catch (e) { showToast(e.message, 'error'); }
   };
+
   updateUserBtn();
 }
 
@@ -179,22 +276,22 @@ async function loadAddresses(el) {
     el.innerHTML = `
       <div class="shop-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <h3 style="color:var(--dark)">${t.addresses}</h3>
-          <button class="btn btn-outline btn-sm" id="showAddrForm">${t.addAddr}</button>
+          <h3 style="color:var(--dark)">${t().addresses}</h3>
+          <button class="btn btn-outline btn-sm" id="showAddrForm">${t().addAddr}</button>
         </div>
         <div class="address-list" id="addrList">
           ${(addresses || []).map(a => `
             <div class="address-card ${a.is_default ? 'default' : ''}" data-id="${a.id}">
-              ${a.is_default ? `<span class="tag-default">${t.default}</span>` : ''}
+              ${a.is_default ? `<span class="tag-default">${t().default}</span>` : ''}
               <p><b>${a.name}</b> · ${a.phone}</p>
               <p>${a.detail}${a.ward ? ', ' + a.ward : ''}, ${a.district}, ${a.province}</p>
               <div class="address-actions">
-                ${!a.is_default ? `<button class="btn-default">${t.setDefault}</button>` : ''}
-                <button class="btn-edit">${t.edit}</button>
-                <button class="btn-delete" style="color:#e53e3e">${t.delete}</button>
+                ${!a.is_default ? `<button class="btn-default">${t().setDefault}</button>` : ''}
+                <button class="btn-edit">${t().edit}</button>
+                <button class="btn-delete" style="color:#e53e3e">${t().delete}</button>
               </div>
             </div>
-          `).join('') || `<p class="shop-empty">${t.addAddr}</p>`}
+          `).join('') || `<p class="shop-empty">${t().addAddr}</p>`}
         </div>
         <div id="addrFormWrap" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid #eef2f9"></div>
       </div>`;
@@ -222,18 +319,18 @@ function showAddressForm(editId = null, data = null) {
   wrap.innerHTML = `
     <div class="form-grid">
       <div class="form-row-2">
-        <div class="form-group"><label>${t.name}</label><input id="fName" value="${data?.name || ''}"></div>
-        <div class="form-group"><label>${t.phone}</label><input id="fPhone" value="${data?.phone || ''}"></div>
+        <div class="form-group"><label>${t().name}</label><input id="fName" value="${data?.name || ''}"></div>
+        <div class="form-group"><label>${t().phone}</label><input id="fPhone" value="${data?.phone || ''}"></div>
       </div>
       <div class="form-row-2">
-        <div class="form-group"><label>${t.province}</label><input id="fProvince" value="${data?.province || ''}"></div>
-        <div class="form-group"><label>${t.district}</label><input id="fDistrict" value="${data?.district || ''}"></div>
+        <div class="form-group"><label>${t().province}</label><input id="fProvince" value="${data?.province || ''}"></div>
+        <div class="form-group"><label>${t().district}</label><input id="fDistrict" value="${data?.district || ''}"></div>
       </div>
-      <div class="form-group"><label>${t.ward}</label><input id="fWard" value="${data?.ward || ''}"></div>
-      <div class="form-group"><label>${t.detail}</label><input id="fDetail" value="${data?.detail || ''}"></div>
+      <div class="form-group"><label>${t().ward}</label><input id="fWard" value="${data?.ward || ''}"></div>
+      <div class="form-group"><label>${t().detail}</label><input id="fDetail" value="${data?.detail || ''}"></div>
       <div class="form-actions">
-        <button class="btn" id="saveAddr">${t.save}</button>
-        <button class="btn btn-ghost" id="cancelAddr">${t.cancel}</button>
+        <button class="btn" id="saveAddr">${t().save}</button>
+        <button class="btn btn-ghost" id="cancelAddr">${t().cancel}</button>
       </div>
     </div>`;
 
@@ -251,7 +348,7 @@ function showAddressForm(editId = null, data = null) {
     try {
       if (editId) await api.updateAddress(editId, payload);
       else await api.createAddress(payload);
-      showToast(t.save, 'success');
+      showToast(t().save, 'success');
       loadTab('addresses');
     } catch (e) { showToast(e.message, 'error'); }
   };
@@ -262,7 +359,7 @@ async function loadOrders(el) {
   try {
     const { orders } = await api.orders();
     if (!orders?.length) {
-      el.innerHTML = `<div class="shop-card shop-empty">${t.noOrders}</div>`;
+      el.innerHTML = `<div class="shop-card shop-empty">${t().noOrders}</div>`;
       return;
     }
     el.innerHTML = orders.map(o => `
@@ -271,7 +368,7 @@ async function loadOrders(el) {
           <b>#${o.id.slice(0, 8).toUpperCase()}</b>
           <span style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleString()}</span>
         </div>
-        <p style="font-size:14px;margin-bottom:8px">${t.status}: <b>${o.status === 'pending' ? t.pending : o.status}</b> · ${t.payment}: ${t.bank}</p>
+        <p style="font-size:14px;margin-bottom:8px">${t().status}: <b>${o.status === 'pending' ? t.pending : o.status}</b> · ${t().payment}: ${t().bank}</p>
         ${(o.items || []).map(i => `<p style="font-size:14px;color:var(--muted)">${i.product_name} × ${i.quantity} — ${formatVnd(i.price * i.quantity)}</p>`).join('')}
         <p style="margin-top:12px;font-weight:800;color:var(--primary)">${formatVnd(o.total_amount)}</p>
       </div>
@@ -284,22 +381,29 @@ function loadProfile(el) {
     <div class="shop-card">
       <p style="margin-bottom:12px"><b>Email:</b> ${currentUser?.email || ''}</p>
       <div class="form-group" style="max-width:360px">
-        <label>${t.name}</label>
+        <label>${t().name}</label>
         <input id="profileName" value="${currentUser?.name || ''}">
       </div>
+      <div class="form-group" style="max-width:360px">
+        <label>${t().newPassword}</label>
+        <input type="password" id="profilePassword" autocomplete="new-password">
+      </div>
       <div class="form-actions">
-        <button class="btn" id="saveProfile">${t.save}</button>
-        <button class="btn btn-ghost" id="logoutBtn">${t.logout}</button>
+        <button class="btn" id="saveProfile">${t().save}</button>
+        <button class="btn btn-ghost" id="logoutBtn">${t().logout}</button>
       </div>
     </div>`;
 
   document.getElementById('saveProfile').onclick = async () => {
     const name = document.getElementById('profileName').value.trim();
+    const password = document.getElementById('profilePassword').value;
+    if (password && password.length < 6) return showToast(t().pwdShort, 'error');
     try {
-      const res = await api.updateProfile(name);
+      const res = await api.updateProfile(name || null, password || null);
       currentUser = res.user;
       setAuth(getToken(), res.user);
-      showToast(t.save, 'success');
+      if (password) document.getElementById('profilePassword').value = '';
+      showToast(t().save, 'success');
     } catch (e) { showToast(e.message, 'error'); }
   };
 

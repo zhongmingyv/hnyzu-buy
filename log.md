@@ -171,3 +171,17 @@ npm run dev
 - `account.html`：退出登录、会话失效时调用 `updateUserBtn()` 同步 header
 - `account.html`：有 token 时先验证再展示订单，避免结算后跳转到登录页
 
+## 2026-08-12 — 邮箱+密码登录/注册
+
+### hnyzu-buy-server
+
+- 新增 `password_hash` 字段（migration `0002_add_password.sql`）
+- 新增 `POST /api/auth/login`、`POST /api/auth/register`
+- 密码 PBKDF2 加密存储，最少 6 位
+- 已有账号默认密码：`EraWorks2026`（迁移后请尽快在个人资料中修改）
+
+### hnyzu-buy
+
+- `account.html`：登录/注册表单支持密码；个人资料可修改密码
+- `js/api.js`：新增 `login`、`register` API
+

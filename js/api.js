@@ -56,9 +56,11 @@ async function request(path, options = {}) {
 export const api = {
   health: () => request('/api/health'),
   sendCode: (email) => request('/api/auth/send-code', { method: 'POST', body: JSON.stringify({ email }) }),
-  verify: (email, code, name) => request('/api/auth/verify', { method: 'POST', body: JSON.stringify({ email, code, name }) }),
+  login: (email, password) => request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (email, password, name) => request('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password, name }) }),
+  verify: (email, code, name, password) => request('/api/auth/verify', { method: 'POST', body: JSON.stringify({ email, code, name, password }) }),
   me: () => request('/api/auth/me'),
-  updateProfile: (name) => request('/api/auth/profile', { method: 'PATCH', body: JSON.stringify({ name }) }),
+  updateProfile: (name, password) => request('/api/auth/profile', { method: 'PATCH', body: JSON.stringify({ ...(name != null ? { name } : {}), ...(password != null ? { password } : {}) }) }),
   products: () => request('/api/products'),
   cart: () => request('/api/cart'),
   addToCart: (product_id, quantity = 1) => request('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id, quantity }) }),
