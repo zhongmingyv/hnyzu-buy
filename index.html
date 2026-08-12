@@ -460,7 +460,7 @@
     <p class="qty-modal-product" id="qtyModalProduct"></p>
     <div class="qty-modal-control">
       <button type="button" id="qtyModalMinus" aria-label="-">−</button>
-      <input type="number" id="qtyModalInput" value="1" min="1" max="99">
+      <input type="number" id="qtyModalInput" value="1" min="0" max="99">
       <button type="button" id="qtyModalPlus" aria-label="+">+</button>
     </div>
     <div class="qty-modal-actions">
@@ -714,6 +714,24 @@ const I18N = {
   }
 };
 
+const LOGIN_BTN_LABELS = { vi: 'Đăng nhập', zh: '登录', en: 'Login' };
+
+function updateLoginBtnLabel(lang) {
+  const btn = document.getElementById('userBtn');
+  if (!btn) return;
+  try {
+    const raw = localStorage.getItem('buy_user');
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user?.email) {
+        btn.textContent = user.email.split('@')[0];
+        return;
+      }
+    }
+  } catch {}
+  btn.textContent = LOGIN_BTN_LABELS[lang] || LOGIN_BTN_LABELS.vi;
+}
+
 function setLang(lang){
   const dict = I18N[lang] || I18N.vi;
   document.documentElement.lang = lang;
@@ -730,7 +748,8 @@ function setLang(lang){
     b.classList.toggle("active", b.dataset.lang === lang);
   });
   try{ localStorage.setItem("site_lang", lang); }catch(e){}
-  if (typeof window.updateUserBtn === "function") window.updateUserBtn();
+  updateLoginBtnLabel(lang);
+  if (typeof window.updateUserBtn === "function") window.updateUserBtn(lang);
 }
 
 document.querySelectorAll(".lang-switch button").forEach(b=>{
@@ -763,7 +782,7 @@ const QTY_I18N = {
   en: { title: 'Select Quantity', confirm: 'Confirm', cancel: 'Cancel' },
 };
 
-function openQtyPicker(label) {
+async function openQtyPicker(label, productId) {
   const lang = getLang();
   const t = QTY_I18N[lang] || QTY_I18N.vi;
   const modal = document.getElementById('qtyModal');
@@ -773,7 +792,16 @@ function openQtyPicker(label) {
   document.getElementById('qtyModalProduct').textContent = label;
   document.getElementById('qtyModalConfirm').textContent = t.confirm;
   document.getElementById('qtyModalCancel').textContent = t.cancel;
-  input.value = 1;
+
+  let initialQty = 1;
+  if (productId) {
+    try {
+      const { items } = await api.cart();
+      const existing = items?.find(i => i.product_id === productId);
+      if (existing) initialQty = existing.quantity;
+    } catch {}
+  }
+  input.value = initialQty;
   modal.hidden = false;
 
   return new Promise((resolve, reject) => {
@@ -794,16 +822,18 @@ function openQtyPicker(label) {
     document.addEventListener('keydown', onKey);
 
     document.getElementById('qtyModalMinus').onclick = () => {
-      input.value = Math.max(1, (parseInt(input.value, 10) || 1) - 1);
+      input.value = Math.max(0, (parseInt(input.value, 10) || 0) - 1);
     };
     document.getElementById('qtyModalPlus').onclick = () => {
-      input.value = Math.min(99, (parseInt(input.value, 10) || 1) + 1);
+      input.value = Math.min(99, (parseInt(input.value, 10) || 0) + 1);
     };
     input.onchange = () => {
-      input.value = Math.max(1, Math.min(99, parseInt(input.value, 10) || 1));
+      const n = parseInt(input.value, 10);
+      input.value = Math.max(0, Math.min(99, Number.isNaN(n) ? 0 : n));
     };
     document.getElementById('qtyModalConfirm').onclick = () => {
-      close(Math.max(1, Math.min(99, parseInt(input.value, 10) || 1)));
+      const n = parseInt(input.value, 10);
+      close(Math.max(0, Math.min(99, Number.isNaN(n) ? 0 : n)));
     };
     document.getElementById('qtyModalCancel').onclick = cancel;
     document.getElementById('qtyModalBackdrop').onclick = cancel;
@@ -850,8 +880,25 @@ document.querySelectorAll('.card[data-product-id]').forEach(card => {
     const p = productMap[id];
     const label = p ? productName(p, getLang()) : (card.querySelector('h3')?.textContent || '');
     try {
-      const qty = await openQtyPicker(label);
-      await addToCart(id, false, qty);
+      const qty = await openQtyPicker(label, id);
+      const lang = getLang();
+      const { items } = await api.cart();
+      const item = items?.find(i => i.product_id === id);
+      if (qty === 0) {
+        if (item) {
+          await api.removeCartItem(item.id);
+          await refreshCartBadge();
+          showToast(lang === 'zh' ? '已从购物车移除' : lang === 'en' ? 'Removed from cart' : 'Đã xóa khỏi giỏ', 'success');
+        }
+        return;
+      }
+      if (item) {
+        await api.updateCartItem(item.id, qty);
+        await refreshCartBadge();
+        showToast(lang === 'zh' ? '已更新购物车' : lang === 'en' ? 'Cart updated' : 'Đã cập nhật giỏ hàng', 'success');
+      } else {
+        await addToCart(id, false, qty);
+      }
     } catch { /* cancelled */ }
   });
   card.querySelector('.btn-buy-now')?.addEventListener('click', () => addToCart(id, true));

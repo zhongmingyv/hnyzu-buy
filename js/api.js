@@ -92,15 +92,15 @@ export function getLang() {
 const LOGIN_LABELS = { vi: 'Đăng nhập', zh: '登录', en: 'Login' };
 
 /** 更新顶部用户按钮：已登录显示用户名，未登录显示登录文案 */
-export function updateUserBtn() {
+export function updateUserBtn(lang) {
   const btn = document.getElementById('userBtn');
   if (!btn) return;
   const user = getStoredUser();
   if (user?.email) {
     btn.textContent = user.email.split('@')[0];
   } else {
-    const lang = getLang();
-    btn.textContent = LOGIN_LABELS[lang] || LOGIN_LABELS.vi;
+    const l = lang || getLang();
+    btn.textContent = LOGIN_LABELS[l] || LOGIN_LABELS.vi;
   }
 }
 

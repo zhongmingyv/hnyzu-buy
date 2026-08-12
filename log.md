@@ -126,3 +126,17 @@ npm run dev
 - `checkout.html`：支付方式下方展示 Vietcombank 收款账户（公司名、账号 1069683613）
 - 下单成功页同步显示账户信息及订单号转账提示
 
+## 2026-08-12 — 数量弹窗支持减至 0
+
+### hnyzu-buy
+
+- `index.html`：数量选择弹窗允许减到 0（最小值 0）；打开时预填购物车已有数量；确认 0 时若购物车已有该商品则移除
+
+## 2026-08-12 — 修复未登录时切换语言登录按钮不变
+
+### hnyzu-buy
+
+- `index.html`：`setLang` 内直接更新登录按钮文案，不依赖模块加载顺序
+- `js/api.js`：`updateUserBtn(lang)` 支持传入当前语言
+- `js/site-header.js`：切换语言时传入 `lang` 参数
+

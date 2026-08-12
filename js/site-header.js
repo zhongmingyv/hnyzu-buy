@@ -42,7 +42,7 @@ function setHeaderLang(lang) {
     b.classList.toggle('active', b.dataset.lang === lang);
   });
   try { localStorage.setItem('site_lang', lang); } catch {}
-  updateUserBtn();
+  updateUserBtn(lang);
 }
 
 export function initSiteHeader() {
