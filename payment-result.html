@@ -113,6 +113,9 @@ function applyPageLang() {
   document.title = t().pageTitle;
 }
 
+// initSiteHeader 会同步回调一次 onLangChange，lastState 必须先于它初始化
+let lastState = null;
+
 initSiteHeader({ onLangChange: (l) => { lang = l; applyPageLang(); if (lastState) render(lastState); } });
 
 function view(html) {
@@ -125,8 +128,6 @@ function actions(buttons) {
 
 const homeBtn = () => `<a href="index.html" class="btn btn-outline">${t().backHome}</a>`;
 const ordersBtn = () => `<a href="account.html?tab=orders" class="btn">${t().viewOrders}</a>`;
-
-let lastState = null;
 
 function render(state) {
   lastState = state;
