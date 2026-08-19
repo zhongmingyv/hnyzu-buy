@@ -71,9 +71,11 @@ export const api = {
   updateAddress: (id, data) => request(`/api/addresses/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   deleteAddress: (id) => request(`/api/addresses/${id}`, { method: 'DELETE' }),
   setDefaultAddress: (id) => request(`/api/addresses/${id}/default`, { method: 'POST' }),
-  checkout: (address_id, payment_method, note) => request('/api/orders/checkout', { method: 'POST', body: JSON.stringify({ address_id, payment_method, note }) }),
+  checkout: (address_id, payment_method, note, locale) => request('/api/orders/checkout', { method: 'POST', body: JSON.stringify({ address_id, payment_method, note, locale }) }),
   orders: () => request('/api/orders'),
   order: (id) => request(`/api/orders/${id}`),
+  vnpayCreate: (order_id, locale) => request('/api/payments/vnpay/create', { method: 'POST', body: JSON.stringify({ order_id, locale }) }),
+  vnpaySync: (order_id) => request('/api/payments/vnpay/sync', { method: 'POST', body: JSON.stringify({ order_id }) }),
 };
 
 export function formatVnd(amount) {

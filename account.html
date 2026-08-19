@@ -57,7 +57,8 @@ const T = {
     addAddr:'Thêm địa chỉ mới', phone:'Số điện thoại', province:'Tỉnh/Thành', district:'Quận/Huyện',
     ward:'Phường/Xã', detail:'Địa chỉ chi tiết', save:'Lưu', cancel:'Huỷ', default:'Mặc định',
     setDefault:'Đặt mặc định', edit:'Sửa', delete:'Xóa', noOrders:'Chưa có đơn hàng.',
-    status:'Trạng thái', pending:'Chờ xử lý', payment:'Thanh toán', bank:'Chuyển khoản ngân hàng'
+    status:'Trạng thái', pending:'Chờ xử lý', payment:'Thanh toán', bank:'Chuyển khoản ngân hàng',
+    vnpay:'VNPAY (QR)', paid:'Đã thanh toán', cancelled:'Đã huỷ', payNow:'Thanh toán ngay'
   },
   zh: {
     title:'账户', login:'登录', register:'注册', email:'邮箱', password:'密码',
@@ -69,7 +70,8 @@ const T = {
     addAddr:'添加新地址', phone:'电话', province:'省/市', district:'区/县',
     ward:'街道/乡', detail:'详细地址', save:'保存', cancel:'取消', default:'默认',
     setDefault:'设为默认', edit:'编辑', delete:'删除', noOrders:'暂无订单。',
-    status:'状态', pending:'待处理', payment:'支付', bank:'银行转账'
+    status:'状态', pending:'待处理', payment:'支付', bank:'银行转账',
+    vnpay:'VNPAY 扫码', paid:'已支付', cancelled:'已取消', payNow:'立即支付'
   },
   en: {
     title:'Account', login:'Login', register:'Register', email:'Email', password:'Password',
@@ -81,10 +83,12 @@ const T = {
     addAddr:'Add New Address', phone:'Phone', province:'Province/City', district:'District',
     ward:'Ward', detail:'Street Address', save:'Save', cancel:'Cancel', default:'Default',
     setDefault:'Set Default', edit:'Edit', delete:'Delete', noOrders:'No orders yet.',
-    status:'Status', pending:'Pending', payment:'Payment', bank:'Bank Transfer'
+    status:'Status', pending:'Pending', payment:'Payment', bank:'Bank Transfer',
+    vnpay:'VNPAY (QR)', paid:'Paid', cancelled:'Cancelled', payNow:'Pay now'
   }
 };
 const t = () => T[lang] || T.vi;
+const orderStatusLabel = (s) => t()[s] || s;
 
 let authViewMode = 'login';
 let currentUser = getStoredUser();
@@ -452,7 +456,7 @@ async function loadOrders(el) {
           <b>#${o.id.slice(0, 8).toUpperCase()}</b>
           <span style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleString()}</span>
         </div>
-        <p style="font-size:14px;margin-bottom:8px">${t().status}: <b>${o.status === 'pending' ? t().pending : o.status}</b> · ${t().payment}: ${t().bank}</p>
+        <p style="font-size:14px;margin-bottom:8px">${t().status}: <b>${orderStatusLabel(o.status)}</b> · ${t().payment}: ${o.payment_method === 'vnpay' ? t().vnpay : t().bank}${o.status === 'pending' && o.payment_method === 'vnpay' ? ` · <a href="payment-result.html?order=${o.id}">${t().payNow}</a>` : ''}</p>
         ${(o.items || []).map(i => `<p style="font-size:14px;color:var(--muted)">${i.product_name} × ${i.quantity} — ${formatVnd(i.price * i.quantity)}</p>`).join('')}
         <p style="margin-top:12px;font-weight:800;color:var(--primary)">${formatVnd(o.total_amount)}</p>
       </div>

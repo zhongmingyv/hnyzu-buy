@@ -3,7 +3,19 @@
     "allow": [
       "PowerShell(Get-ChildItem -Recurse -File | ForEach-Object { $_.FullName })",
       "PowerShell(Remove-Item *)",
-      "PowerShell(Start-Process .\\\\index.html)"
+      "PowerShell(Start-Process .\\\\index.html)",
+      "WebFetch(domain:sandbox.vnpayment.vn)",
+      "Bash(npx tsc *)",
+      "Bash(npx wrangler *)",
+      "Bash(curl -s http://localhost:8787/api/health)",
+      "Bash(curl -s -X POST http://localhost:8787/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"vnptest@example.com\",\"password\":\"Test123456\",\"name\":\"VNP Tester\"}')",
+      "Read(//tmp/**)",
+      "Bash(curl -s -X POST http://localhost:8787/api/orders/checkout -H 'Content-Type: application/json' -H 'Authorization: Bearer __TRACKED_VAR__' -d '{\"address_id\":\"__TRACKED_VAR__\",\"payment_method\":\"vnpay\",\"locale\":\"vi\"}')",
+      "Bash(python -c ' *)",
+      "Bash(curl -s -X POST http://localhost:8787/api/orders/checkout -H 'Content-Type: application/json' -H 'Authorization: Bearer __TRACKED_VAR__' -d '{\"address_id\":\"__TRACKED_VAR__\",\"payment_method\":\"vnpay\",\"locale\":\"vi\"}' -o checkout.tmp.json)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:8787/api/cart -H 'Authorization: Bearer __TRACKED_VAR__')",
+      "Bash(curl -s -X POST http://localhost:8787/api/cart/items -H 'Content-Type: application/json' -H 'Authorization: Bearer __TRACKED_VAR__' -d '{\"product_id\":\"p3\",\"quantity\":1}')"
     ]
   }
 }

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="api-base" content="https://api.eraworks.vn">
+<title>Kết quả thanh toán — ERAWORKS</title>
+<link rel="stylesheet" href="css/site-header.css">
+<link rel="stylesheet" href="css/shop.css">
+<style>
+  :root{--primary:#0b5fff;--primary-dark:#0846bd;--dark:#0f1a2e;--text:#33415c;--muted:#6b7a99;--bg:#f5f8fd;--radius:16px;--shadow:0 10px 40px rgba(15,26,46,.08)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{text-decoration:none;color:inherit}
+  .container{max-width:1000px;margin:0 auto;padding:0 20px}
+  .btn{display:inline-block;padding:13px 30px;border-radius:999px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;border:0;cursor:pointer}
+  .btn:hover{background:var(--primary-dark)}
+  .btn-outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+  .btn-outline:hover{background:#eef4ff}
+  .result-card{text-align:center;padding:40px 24px}
+  .result-card .icon{font-size:56px;line-height:1;margin-bottom:12px}
+  .result-card h2{color:var(--dark);margin-bottom:8px}
+  .result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .result-detail{margin-top:16px;padding:16px;border-radius:12px;background:#f5f9ff;border:1px solid #dbeafe;font-size:14px;text-align:left;display:inline-block;min-width:260px}
+  .result-detail p{margin-bottom:6px}
+  .result-detail p:last-child{margin-bottom:0}
+  .result-detail b{color:var(--dark)}
+  .spinner{width:34px;height:34px;border:3px solid #dbeafe;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header id="siteHeader"></header>
+
+<main class="shop-page">
+  <div class="container">
+    <h1 id="pageTitle">Kết quả thanh toán</h1>
+    <div id="resultView"></div>
+  </div>
+</main>
+
+<script type="module">
+import { api, formatVnd, getLang, refreshCartBadge, qs } from './js/api.js';
+import { initSiteHeader } from './js/site-header.js';
+
+let lang = getLang();
+
+const I18N = {
+  vi: {
+    title:'Kết quả thanh toán', pageTitle:'Kết quả thanh toán — ERAWORKS',
+    checking:'Đang xác nhận kết quả thanh toán...',
+    success:'Thanh toán thành công!', failed:'Thanh toán không thành công',
+    pending:'Chưa nhận được thanh toán',
+    pendingDesc:'Chúng tôi chưa nhận được xác nhận từ VNPAY. Nếu bạn đã thanh toán, vui lòng đợi ít phút rồi kiểm tra lại.',
+    invalid:'Dữ liệu trả về không hợp lệ',
+    invalidDesc:'Chữ ký giao dịch không hợp lệ. Vui lòng liên hệ chúng tôi để được hỗ trợ.',
+    notfound:'Không tìm thấy giao dịch',
+    orderNo:'Mã đơn:', amount:'Số tiền:', reason:'Lý do:',
+    retry:'Thanh toán lại', recheck:'Kiểm tra lại', backHome:'Về trang chủ', viewOrders:'Xem đơn hàng',
+    codes:{
+      '24':'Khách hàng đã huỷ giao dịch','51':'Tài khoản không đủ số dư','11':'Hết hạn thanh toán',
+      '12':'Tài khoản/thẻ bị khoá','13':'Nhập sai mật khẩu OTP','10':'Xác thực sai quá 3 lần',
+      '09':'Chưa đăng ký dịch vụ Internet Banking','65':'Vượt hạn mức giao dịch trong ngày',
+      '75':'Ngân hàng đang bảo trì','79':'Nhập sai mật khẩu quá số lần quy định','99':'Lỗi không xác định'
+    }
+  },
+  zh: {
+    title:'支付结果', pageTitle:'支付结果 — 新纪元科技',
+    checking:'正在确认支付结果...',
+    success:'支付成功！', failed:'支付未成功',
+    pending:'尚未收到付款',
+    pendingDesc:'我们还没有收到 VNPAY 的确认。如果你已完成付款，请稍等几分钟后重新查询。',
+    invalid:'返回数据校验失败',
+    invalidDesc:'交易签名无效，请联系我们协助处理。',
+    notfound:'未找到该交易',
+    orderNo:'订单号：', amount:'金额：', reason:'原因：',
+    retry:'重新支付', recheck:'重新查询', backHome:'返回首页', viewOrders:'查看订单',
+    codes:{
+      '24':'客户取消了交易','51':'账户余额不足','11':'支付超时',
+      '12':'账户/银行卡被冻结','13':'OTP 密码输入错误','10':'验证失败超过 3 次',
+      '09':'未开通网上银行服务','65':'超出当日交易限额',
+      '75':'银行系统维护中','79':'密码输入错误次数超限','99':'未知错误'
+    }
+  },
+  en: {
+    title:'Payment Result', pageTitle:'Payment Result — ERAWORKS',
+    checking:'Confirming your payment...',
+    success:'Payment successful!', failed:'Payment failed',
+    pending:'Payment not received yet',
+    pendingDesc:'We have not received confirmation from VNPAY yet. If you have already paid, please wait a moment and check again.',
+    invalid:'Invalid response data',
+    invalidDesc:'The transaction signature is invalid. Please contact us for assistance.',
+    notfound:'Transaction not found',
+    orderNo:'Order ID:', amount:'Amount:', reason:'Reason:',
+    retry:'Pay again', recheck:'Check again', backHome:'Back to home', viewOrders:'View orders',
+    codes:{
+      '24':'Customer cancelled the transaction','51':'Insufficient balance','11':'Payment timed out',
+      '12':'Account/card is locked','13':'Incorrect OTP','10':'Authentication failed more than 3 times',
+      '09':'Internet Banking not registered','65':'Daily transaction limit exceeded',
+      '75':'Bank under maintenance','79':'Password attempts exceeded','99':'Unknown error'
+    }
+  }
+};
+
+const t = () => I18N[lang] || I18N.vi;
+
+const orderId = qs('order');
+const returnStatus = qs('status');
+const responseCode = qs('code');
+
+function applyPageLang() {
+  document.getElementById('pageTitle').textContent = t().title;
+  document.title = t().pageTitle;
+}
+
+initSiteHeader({ onLangChange: (l) => { lang = l; applyPageLang(); if (lastState) render(lastState); } });
+
+function view(html) {
+  document.getElementById('resultView').innerHTML = `<div class="shop-card result-card">${html}</div>`;
+}
+
+function actions(buttons) {
+  return `<div class="result-actions">${buttons.join('')}</div>`;
+}
+
+const homeBtn = () => `<a href="index.html" class="btn btn-outline">${t().backHome}</a>`;
+const ordersBtn = () => `<a href="account.html?tab=orders" class="btn">${t().viewOrders}</a>`;
+
+let lastState = null;
+
+function render(state) {
+  lastState = state;
+  const tx = t();
+  const detail = state.order
+    ? `<div class="result-detail">
+         <p>${tx.orderNo} <b>${state.order.id.slice(0, 8).toUpperCase()}</b></p>
+         <p>${tx.amount} <b>${formatVnd(state.order.total_amount)}</b></p>
+         ${state.reason ? `<p>${tx.reason} <b>${state.reason}</b></p>` : ''}
+       </div>`
+    : '';
+
+  if (state.kind === 'success') {
+    view(`<div class="icon">✅</div><h2>${tx.success}</h2>${detail}
+          ${actions([homeBtn(), ordersBtn()])}`);
+    return;
+  }
+  if (state.kind === 'pending') {
+    view(`<div class="icon">⏳</div><h2>${tx.pending}</h2>
+          <p style="color:var(--muted);margin-top:8px">${tx.pendingDesc}</p>${detail}
+          ${actions([`<button class="btn btn-outline" id="recheckBtn">${tx.recheck}</button>`, `<button class="btn" id="retryBtn">${tx.retry}</button>`])}`);
+    bindRetry();
+    return;
+  }
+  if (state.kind === 'failed') {
+    view(`<div class="icon">❌</div><h2>${tx.failed}</h2>${detail}
+          ${actions([homeBtn(), `<button class="btn" id="retryBtn">${tx.retry}</button>`])}`);
+    bindRetry();
+    return;
+  }
+  view(`<div class="icon">⚠️</div><h2>${state.heading}</h2>
+        ${state.desc ? `<p style="color:var(--muted);margin-top:8px">${state.desc}</p>` : ''}
+        ${actions([homeBtn(), ordersBtn()])}`);
+}
+
+function bindRetry() {
+  const retry = document.getElementById('retryBtn');
+  if (retry) retry.onclick = async () => {
+    retry.disabled = true;
+    try {
+      const { payment_url } = await api.vnpayCreate(orderId, lang);
+      location.href = payment_url;
+    } catch (e) {
+      retry.disabled = false;
+      alert(e.message);
+    }
+  };
+  const recheck = document.getElementById('recheckBtn');
+  if (recheck) recheck.onclick = () => { recheck.disabled = true; check(); };
+}
+
+function reasonText(code) {
+  if (!code || code === '00') return null;
+  return t().codes[code] || `VNPAY code ${code}`;
+}
+
+async function check() {
+  const tx = t();
+  view(`<div class="spinner"></div><p style="color:var(--muted)">${tx.checking}</p>`);
+
+  let order = null;
+  try {
+    const res = await api.vnpaySync(orderId);
+    order = (await api.order(orderId)).order;
+    if (res.payment_status === 'paid' || res.order_status === 'paid') {
+      refreshCartBadge();
+      render({ kind: 'success', order });
+      return;
+    }
+    if (res.payment_status === 'failed') {
+      render({ kind: 'failed', order, reason: reasonText(responseCode) });
+      return;
+    }
+    render({ kind: 'pending', order, reason: reasonText(responseCode) });
+  } catch (e) {
+    if (e.status === 401) { location.href = 'account.html?return=' + encodeURIComponent(location.pathname + location.search); return; }
+    // 对账接口不可用时退回到 VNPAY 回跳带的结果码
+    try { order = (await api.order(orderId)).order; } catch {}
+    if (order?.status === 'paid') { render({ kind: 'success', order }); return; }
+    render(returnStatus === 'ok'
+      ? { kind: 'pending', order }
+      : { kind: 'failed', order, reason: reasonText(responseCode) });
+  }
+}
+
+applyPageLang();
+refreshCartBadge();
+
+if (returnStatus === 'invalid') {
+  render({ kind: 'error', heading: t().invalid, desc: t().invalidDesc });
+} else if (!orderId || returnStatus === 'notfound') {
+  render({ kind: 'error', heading: t().notfound, desc: '' });
+} else {
+  check();
+}
+</script>
+</body>
+</html>
