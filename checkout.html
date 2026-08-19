@@ -50,8 +50,11 @@ const I18N = {
   vi: {
     title:'Thanh toán', pageTitle:'Thanh toán — ERAWORKS', addr:'Địa chỉ giao hàng', noAddr:'Chưa có địa chỉ.', addAddr:'Thêm địa chỉ',
     payment:'Phương thức thanh toán', bank:'Chuyển khoản ngân hàng', bankDesc:'Chuyển khoản theo thông tin công ty, đơn hàng xử lý sau khi xác nhận.',
-    vnpay:'VNPAY — Quét mã QR', vnpayDesc:'Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử. Đơn hàng được xác nhận ngay sau khi thanh toán.',
+    vnpay:'VNPAY — Thanh toán trực tuyến', vnpayDesc:'Đơn hàng được xác nhận ngay sau khi thanh toán thành công.',
     redirecting:'Đang chuyển tới VNPAY...',
+    vnpQr:'Quét mã QR', vnpQrDesc:'Dùng app ngân hàng hoặc ví điện tử',
+    vnpBank:'Thẻ ATM / Tài khoản ngân hàng nội địa', vnpBankDesc:'Nhập thông tin thẻ nội địa',
+    vnpIntl:'Thẻ quốc tế', vnpIntlDesc:'Visa, MasterCard, JCB, AMEX',
     bankInfoTitle:'Thông tin tài khoản nhận', acctName:'Tên tài khoản', acctNo:'Số tài khoản', acctBank:'Ngân hàng',
     transferHint:'Vui lòng chuyển khoản đúng số tiền và ghi mã đơn hàng {orderId} vào nội dung chuyển khoản.',
     note:'Ghi chú', orderSummary:'Đơn hàng', total:'Tổng cộng', place:'Đặt hàng', continueShop:'Tiếp tục mua sắm',
@@ -61,8 +64,11 @@ const I18N = {
   zh: {
     title:'结算', pageTitle:'结算 — 新纪元科技', addr:'收货地址', noAddr:'暂无地址。', addAddr:'添加地址',
     payment:'支付方式', bank:'银行转账', bankDesc:'请转账至以下公司账户，确认到账后处理订单。',
-    vnpay:'VNPAY — 扫码支付', vnpayDesc:'使用银行 App 或电子钱包扫描二维码，支付成功后订单立即确认。',
+    vnpay:'VNPAY — 在线支付', vnpayDesc:'支付成功后订单立即确认。',
     redirecting:'正在跳转至 VNPAY...',
+    vnpQr:'扫描二维码', vnpQrDesc:'使用银行 App 或电子钱包扫码',
+    vnpBank:'越南国内银行卡 / 账户', vnpBankDesc:'填写国内卡信息支付',
+    vnpIntl:'国际信用卡', vnpIntlDesc:'Visa、MasterCard、JCB、AMEX',
     bankInfoTitle:'收款账户信息', acctName:'账户名称', acctNo:'账号', acctBank:'开户银行',
     transferHint:'请转账准确金额，并在转账备注中填写订单号 {orderId}。',
     note:'备注', orderSummary:'订单摘要', total:'合计', place:'提交订单', continueShop:'继续购买',
@@ -72,8 +78,11 @@ const I18N = {
   en: {
     title:'Checkout', pageTitle:'Checkout — ERAWORKS', addr:'Shipping Address', noAddr:'No address yet.', addAddr:'Add address',
     payment:'Payment Method', bank:'Bank Transfer', bankDesc:'Please transfer to the company account below; your order will be processed after confirmation.',
-    vnpay:'VNPAY — Scan QR Code', vnpayDesc:'Scan the QR code with your banking app or e-wallet. Your order is confirmed immediately after payment.',
+    vnpay:'VNPAY — Online Payment', vnpayDesc:'Your order is confirmed immediately after successful payment.',
     redirecting:'Redirecting to VNPAY...',
+    vnpQr:'Scan QR code', vnpQrDesc:'Use your banking app or e-wallet',
+    vnpBank:'Domestic ATM card / bank account', vnpBankDesc:'Enter your domestic card details',
+    vnpIntl:'International card', vnpIntlDesc:'Visa, MasterCard, JCB, AMEX',
     bankInfoTitle:'Payment Account Details', acctName:'Account name', acctNo:'Account number', acctBank:'Bank',
     transferHint:'Please transfer the exact amount and include order ID {orderId} in the transfer note.',
     note:'Note', orderSummary:'Order Summary', total:'Total', place:'Place Order', continueShop:'Continue shopping',
@@ -90,6 +99,7 @@ let cartData = null;
 let addresses = [];
 let selectedAddressId = null;
 let selectedPayment = 'vnpay';
+let selectedBankCode = 'VNPAYQR';
 let orderComplete = false;
 
 function applyPageLang() {
@@ -171,6 +181,13 @@ function render() {
               <input type="radio" name="payment" value="vnpay" ${selectedPayment === 'vnpay' ? 'checked' : ''}>
               <div><b>${tx.vnpay}</b><span>${tx.vnpayDesc}</span></div>
             </label>
+            <div id="vnpMethods" style="display:${selectedPayment === 'vnpay' ? 'block' : 'none'};margin:-4px 0 8px 26px">
+              ${[['VNPAYQR', tx.vnpQr, tx.vnpQrDesc], ['VNBANK', tx.vnpBank, tx.vnpBankDesc], ['INTCARD', tx.vnpIntl, tx.vnpIntlDesc]].map(([code, name, desc]) => `
+                <label class="payment-option" style="margin-bottom:6px;padding:10px 14px">
+                  <input type="radio" name="bankCode" value="${code}" ${selectedBankCode === code ? 'checked' : ''}>
+                  <div><b style="font-size:14px">${name}</b><span style="font-size:12px">${desc}</span></div>
+                </label>`).join('')}
+            </div>
             <label class="payment-option">
               <input type="radio" name="payment" value="bank_transfer" ${selectedPayment === 'bank_transfer' ? 'checked' : ''}>
               <div><b>${tx.bank}</b><span>${tx.bankDesc}</span></div>
@@ -211,7 +228,12 @@ function render() {
     r.onchange = () => {
       selectedPayment = r.value;
       document.getElementById('bankInfoBox').style.display = r.value === 'bank_transfer' ? 'block' : 'none';
+      document.getElementById('vnpMethods').style.display = r.value === 'vnpay' ? 'block' : 'none';
     };
+  });
+
+  document.querySelectorAll('input[name="bankCode"]').forEach(r => {
+    r.onchange = () => { selectedBankCode = r.value; };
   });
 
   document.getElementById('placeOrderBtn').onclick = placeOrder;
@@ -231,7 +253,8 @@ async function placeOrder() {
   const btn = document.getElementById('placeOrderBtn');
   btn.disabled = true;
   try {
-    const result = await api.checkout(addrId, payment, note, lang);
+    const bankCode = document.querySelector('input[name="bankCode"]:checked')?.value || selectedBankCode;
+    const result = await api.checkout(addrId, payment, note, lang, payment === 'vnpay' ? bankCode : null);
 
     if (payment === 'vnpay') {
       if (!result.payment_url) throw new Error('Missing payment URL');

@@ -167,7 +167,8 @@ function bindRetry() {
   if (retry) retry.onclick = async () => {
     retry.disabled = true;
     try {
-      const { payment_url } = await api.vnpayCreate(orderId, lang);
+      // 空 bank_code：让客户在 VNPAY 页面重新挑选支付方式
+      const { payment_url } = await api.vnpayCreate(orderId, lang, '');
       location.href = payment_url;
     } catch (e) {
       retry.disabled = false;
